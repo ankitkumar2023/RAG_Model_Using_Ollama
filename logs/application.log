@@ -88,3 +88,6 @@ Traceback (most recent call last):
   File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
     from .traceback import Traceback
 ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-30 23:42:42 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:42:42 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:42:44 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.

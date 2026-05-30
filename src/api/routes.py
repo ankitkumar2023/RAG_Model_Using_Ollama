@@ -1,18 +1,14 @@
+
 from __future__ import annotations
 
 import logging
 import time
 import uuid
-from typing import Any
 
 from config.settings import get_settings
-from prompts.rag_prompts import (
-    ANSWER_SYNTHESIS_PROMPT,
-)
 from prompts.system_prompts import (
     GUARDRAIL_PROMPT,
     RAG_SYSTEM_PROMPT,
-    SYSTEM_PROMPT,
 )
 from src.api.schemas import (
     ChatRequest,
@@ -30,16 +26,10 @@ from src.rag.chunking import TextChunker
 from src.rag.embeddings import EmbeddingGenerator
 from src.rag.retrieval import Retriever
 from src.rag.vector_store import VectorStore
-from src.tools.calculator_tool import (
-    CalculatorTool,
-)
+from src.tools.calculator_tool import CalculatorTool
 from src.tools.stock_tool import StockTool
-from src.tools.weather_tool import (
-    WeatherTool,
-)
-from src.tools.web_search_tool import (
-    WebSearchTool,
-)
+from src.tools.weather_tool import WeatherTool
+from src.tools.web_search_tool import WebSearchTool
 
 logger = logging.getLogger(__name__)
 
@@ -67,17 +57,13 @@ class APIRouter:
 
         self.chunker = TextChunker()
 
-        self.calculator_tool = (
-            CalculatorTool()
-        )
+        self.calculator_tool = CalculatorTool()
 
         self.weather_tool = WeatherTool()
 
         self.stock_tool = StockTool()
 
-        self.web_search_tool = (
-            WebSearchTool()
-        )
+        self.web_search_tool = WebSearchTool()
 
     async def health_check(
         self,
@@ -224,6 +210,11 @@ class APIRouter:
             )
         )
 
+        logger.info(
+            "Input moderation result: %s",
+            moderation_result,
+        )
+
         if "UNSAFE" in moderation_result:
             return ChatResponse(
                 response=(
@@ -234,6 +225,7 @@ class APIRouter:
                 guardrail_passed=False,
                 tools_used=[],
                 retrieved_documents=0,
+                retrieved_context="",
             )
 
         # ==========================================
@@ -251,22 +243,87 @@ class APIRouter:
 
         rag_context = ""
 
+        rewritten_query = request.query
+
+        # ==========================================
+        # QUERY REWRITING
+        # ==========================================
+
+        if request.use_rag:
+            rewrite_prompt = f""" You are a semantic retrieval optimization system. Rewrite the user's query to improve vector database retrieval quality. Rules: 1. Preserve exact terminology. 2. Do NOT introduce hyphenation. 3. Do NOT rename entities. 4. Fix only obvious grammar issues. 5. Keep original wording whenever possible. 6. Return ONLY rewritten query. User Query: {request.query}
+
+Rewritten Query:
+"""
+
+            try:
+                rewrite_response = (
+                    await self.client.generate(
+                        prompt=rewrite_prompt,
+                        model=settings.primary_model,
+                        stream=False,
+                    )
+                )
+
+                rewritten_query = (
+                    rewrite_response.get(
+                        "response",
+                        request.query,
+                    )
+                    .strip()
+                )
+
+                logger.info(
+                    "Original Query: %s",
+                    request.query,
+                )
+
+                logger.info(
+                    "Rewritten Query: %s",
+                    rewritten_query,
+                )
+
+            except Exception:
+                logger.exception(
+                    "Query rewriting failed."
+                )
+
+                rewritten_query = request.query
+
         # ==========================================
         # RAG RETRIEVAL
         # ==========================================
 
         if request.use_rag:
-            retrieved_documents = (
-                await self.retriever.retrieve(
-                    request.query
+            try:
+                retrieved_documents = (
+                    await self.retriever.retrieve(
+                        rewritten_query
+                    )
                 )
-            )
 
-            rag_context = (
-                self.retriever.build_context(
-                    retrieved_documents
+                logger.info(
+                    "Retrieved %s documents.",
+                    len(retrieved_documents),
                 )
-            )
+
+                rag_context = (
+                    self.retriever.build_context(
+                        retrieved_documents
+                    )
+                )
+
+                logger.info(
+                    "Retrieved Context:\n%s",
+                    rag_context[:3000],
+                )
+
+            except Exception:
+                logger.exception(
+                    "RAG retrieval failed."
+                )
+
+                retrieved_documents = []
+                rag_context = ""
 
         # ==========================================
         # PROMPT BUILDING
@@ -291,40 +348,88 @@ USER QUESTION
 CRITICAL INSTRUCTIONS
 ===========================================================
 
-- Answer ONLY using retrieved context.
-- If answer exists in context, provide it directly.
-- Do NOT ask unnecessary follow-up questions.
-- Preserve exact percentages and values.
-- Keep answer concise and factual.
-- If context contains the answer,
-  you MUST answer directly.
+1. Answer ONLY using retrieved context.
+
+2. If answer exists in retrieved context:
+   - answer directly
+   - do NOT ask follow-up questions
+   - do NOT say information is missing
+
+3. Preserve exact:
+   - percentages
+   - dates
+   - numbers
+   - grading values
+   - names
+
+4. If answer does NOT exist in context:
+   respond with:
+   "The uploaded documents do not contain this information."
+
+5. Keep answer concise and factual.
 
 ===========================================================
 FINAL ANSWER
 ===========================================================
 """
 
+        logger.info(
+            "Final prompt generated successfully."
+        )
+
         # ==========================================
         # LLM GENERATION
         # ==========================================
 
-        response = (
-            await self.client.generate(
-                prompt=final_prompt,
-                model=settings.primary_model,
-                stream=False,
+        try:
+            response = (
+                await self.client.generate(
+                    prompt=final_prompt,
+                    model=settings.primary_model,
+                    stream=False,
+                )
             )
-        )
 
-        raw_response = response.get(
-            "response",
-            "",
-        )
+            raw_response = response.get(
+                "response",
+                "",
+            )
+
+            logger.info(
+                "Raw model response:\n%s",
+                raw_response[:2000],
+            )
+
+        except Exception:
+            logger.exception(
+                "LLM generation failed."
+            )
+
+            return ChatResponse(
+                response=(
+                    "Generation failed due to "
+                    "internal system error."
+                ),
+                model=settings.primary_model,
+                guardrail_passed=False,
+                tools_used=[],
+                retrieved_documents=0,
+                retrieved_context="",
+            )
+
+        # ==========================================
+        # RESPONSE CLEANING
+        # ==========================================
 
         cleaned_response = (
             ResponseParser.clean_response(
                 raw_response
             )
+        )
+
+        logger.info(
+            "Cleaned response:\n%s",
+            cleaned_response[:2000],
         )
 
         # ==========================================
@@ -337,11 +442,24 @@ FINAL ANSWER
             f"{cleaned_response}"
         )
 
-        output_moderation = (
-            await self.client.generate_guard_response(
-                output_guard_prompt
+        try:
+            output_moderation = (
+                await self.client.generate_guard_response(
+                    output_guard_prompt
+                )
             )
-        )
+
+            logger.info(
+                "Output moderation result: %s",
+                output_moderation,
+            )
+
+        except Exception:
+            logger.exception(
+                "Output moderation failed."
+            )
+
+            output_moderation = "SAFE"
 
         if "UNSAFE" in output_moderation:
             cleaned_response = (
@@ -350,7 +468,7 @@ FINAL ANSWER
             )
 
         logger.info(
-            "Chat orchestration completed."
+            "Chat orchestration completed successfully."
         )
 
         return ChatResponse(
@@ -361,4 +479,6 @@ FINAL ANSWER
             retrieved_documents=len(
                 retrieved_documents
             ),
+            retrieved_context=rag_context,
         )
+

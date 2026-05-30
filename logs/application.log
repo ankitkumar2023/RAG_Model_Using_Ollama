@@ -91,3 +91,423 @@ ImportError: sys.meta_path is None, Python is likely shutting down
 2026-05-30 23:42:42 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
 2026-05-30 23:42:42 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
 2026-05-30 23:42:44 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:08:15 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:08:15 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:08:15 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:08:15 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:08:33 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:08:34 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:08:36 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:09:04 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:09:04 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:09:04 | INFO | src.rag.chunking | chunking.py:97 | Generated 3 chunks.
+2026-05-31 00:09:07 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 3/3
+2026-05-31 00:09:07 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 3 documents into vector store.
+2026-05-31 00:09:07 | INFO | src.api.routes | routes.py:153 | Document uploaded successfully.
+2026-05-31 00:09:08 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:09:52 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:09:53 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:09:54 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:09:54 | ERROR | __main__ | main.py:602 | Chat processing failed.
+Traceback (most recent call last):
+  File "E:\AI-ML\Rapid_Prototyping\main.py", line 500, in <module>
+    result = run_async(
+             ^^^^^^^^^^
+  File "E:\AI-ML\Rapid_Prototyping\main.py", line 199, in run_async
+    return loop.run_until_complete(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "E:\AI-ML\Rapid_Prototyping\main.py", line 158, in process_chat_async
+    response = await router.process_chat(
+                     ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'APIRouter' object has no attribute 'process_chat'
+2026-05-31 00:15:43 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:15:43 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:15:43 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:15:43 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:15:59 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:16:00 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:16:02 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:16:07 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:16:08 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:16:08 | INFO | src.rag.chunking | chunking.py:97 | Generated 3 chunks.
+2026-05-31 00:16:10 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 3/3
+2026-05-31 00:16:10 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 3 documents into vector store.
+2026-05-31 00:16:10 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
+2026-05-31 00:16:11 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:16:36 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:16:36 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:16:37 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:16:59 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 00:17:24 | INFO | src.api.routes | routes.py:290 | Original Query: How much does the final offline exam contribute to the total marks?
+2026-05-31 00:17:24 | INFO | src.api.routes | routes.py:295 | Rewritten Query: How much does the final offline exam contribute to the total marks in percentage?
+2026-05-31 00:17:32 | INFO | src.rag.retrieval | retrieval.py:109 | Retrieved 0 relevant documents.
+2026-05-31 00:17:32 | INFO | src.api.routes | routes.py:319 | Retrieved 0 documents.
+2026-05-31 00:17:32 | INFO | src.api.routes | routes.py:330 | Retrieved Context:
+
+2026-05-31 00:17:32 | INFO | src.api.routes | routes.py:391 | Final prompt generated successfully.
+2026-05-31 00:17:54 | INFO | src.api.routes | routes.py:413 | Raw model response:
+The uploaded documents do not contain this information.
+2026-05-31 00:17:54 | INFO | src.api.routes | routes.py:445 | Cleaned response:
+The uploaded documents do not contain this information.
+2026-05-31 00:18:20 | INFO | src.api.routes | routes.py:467 | Output moderation result: safe
+2026-05-31 00:18:20 | INFO | src.api.routes | routes.py:485 | Chat orchestration completed successfully.
+2026-05-31 00:18:20 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:18:20 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:18:20 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:38:33 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:38:33 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:38:33 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:38:33 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:39:59 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:40:00 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:40:04 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:40:13 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:40:14 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:40:16 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:40:21 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:40:22 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:40:22 | INFO | src.rag.chunking | chunking.py:97 | Generated 3 chunks.
+2026-05-31 00:40:25 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 3/3
+2026-05-31 00:40:25 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 3 documents into vector store.
+2026-05-31 00:40:25 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
+2026-05-31 00:40:26 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:40:26 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:40:54 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:40:55 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:40:57 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:41:19 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 00:41:44 | INFO | src.api.routes | routes.py:290 | Original Query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:41:44 | INFO | src.api.routes | routes.py:295 | Rewritten Query: What percentage does the End-of-Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:41:44 | INFO | src.rag.retrieval | retrieval.py:53 | Starting retrieval for query: What percentage does the End-of-Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:94 | Raw retrieval results count: 5
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 E
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 E
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 E
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview=NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intelligence & Machine 
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:150 | Retrieved 5 relevant documents.
+2026-05-31 00:41:52 | INFO | src.api.routes | routes.py:319 | Retrieved 5 documents.
+2026-05-31 00:41:52 | INFO | src.rag.retrieval | retrieval.py:193 | Built context with 5 documents.
+2026-05-31 00:41:52 | INFO | src.api.routes | routes.py:330 | Retrieved Context:
+[Document 1]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 2]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 3]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, me
+2026-05-31 00:41:52 | INFO | src.api.routes | routes.py:391 | Final prompt generated successfully.
+2026-05-31 00:42:35 | INFO | src.api.routes | routes.py:413 | Raw model response:
+The End of Program - Offline exam contributes 10% to the grading scheme.
+2026-05-31 00:42:36 | INFO | src.api.routes | routes.py:445 | Cleaned response:
+The End of Program - Offline exam contributes 10% to the grading scheme.
+2026-05-31 00:43:00 | INFO | src.api.routes | routes.py:467 | Output moderation result: safe
+2026-05-31 00:43:00 | INFO | src.api.routes | routes.py:485 | Chat orchestration completed successfully.
+2026-05-31 00:43:00 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:43:00 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:43:00 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:49:56 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:49:56 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:49:56 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-31 00:49:56 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-31 00:55:07 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:55:08 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:55:12 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:55:27 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:55:29 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:55:29 | INFO | __main__ | main.py:233 | Temporary file created: C:\Users\anamo\AppData\Local\Temp\tmp2wc_ljib.pdf
+2026-05-31 00:55:30 | INFO | __main__ | main.py:169 | Extracted 1793 characters from PDF.
+2026-05-31 00:55:30 | INFO | src.rag.chunking | chunking.py:97 | Generated 3 chunks.
+2026-05-31 00:55:34 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 3/3
+2026-05-31 00:55:34 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 3 documents into vector store.
+2026-05-31 00:55:34 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
+2026-05-31 00:55:35 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:56:59 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.

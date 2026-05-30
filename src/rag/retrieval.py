@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import logging
@@ -34,7 +35,10 @@ class Retriever:
         embedding_generator: EmbeddingGenerator,
         vector_store: VectorStore,
     ) -> None:
-        self.embedding_generator = embedding_generator
+        self.embedding_generator = (
+            embedding_generator
+        )
+
         self.vector_store = vector_store
 
     async def retrieve(
@@ -46,47 +50,91 @@ class Retriever:
         Retrieve relevant documents.
         """
 
-        query_embedding = await (
-            self.embedding_generator.embed_text(
+        logger.info(
+            "Starting retrieval for query: %s",
+            query,
+        )
+
+        # ==========================================
+        # GENERATE QUERY EMBEDDING
+        # ==========================================
+
+        query_embedding = (
+            await self.embedding_generator.embed_text(
                 query
             )
         )
 
-        raw_results = await (
-            self.vector_store.similarity_search(
+        # ==========================================
+        # VECTOR SEARCH
+        # ==========================================
+
+        raw_results = (
+            await self.vector_store.similarity_search(
                 embedding=query_embedding,
                 top_k=top_k,
             )
         )
 
-        documents = (
-            raw_results.get("documents", [[]])[0]
-        )
+        documents = raw_results.get(
+            "documents",
+            [[]],
+        )[0]
 
-        metadatas = (
-            raw_results.get("metadatas", [[]])[0]
-        )
+        metadatas = raw_results.get(
+            "metadatas",
+            [[]],
+        )[0]
 
-        distances = (
-            raw_results.get("distances", [[]])[0]
+        distances = raw_results.get(
+            "distances",
+            [[]],
+        )[0]
+
+        logger.info(
+            "Raw retrieval results count: %s",
+            len(documents),
         )
 
         retrieved_docs: list[
             RetrievedDocument
         ] = []
 
+        # ==========================================
+        # PROCESS RETRIEVED DOCUMENTS
+        # ==========================================
+
         for text, metadata, distance in zip(
             documents,
             metadatas,
             distances,
         ):
-            similarity_score = 1.0 - float(distance)
+            try:
+                similarity_score = float(distance)
 
-            if (
-                similarity_score
-                < settings.similarity_threshold
-            ):
-                continue
+            except Exception:
+                similarity_score = 0.0
+
+            logger.info(
+                "Retrieved document | "
+                "Score=%.4f | "
+                "Source=%s | "
+                "Preview=%s",
+                similarity_score,
+                metadata.get(
+                    "source",
+                    "unknown",
+                ),
+                text[:200],
+            )
+
+            # IMPORTANT:
+            # Do NOT aggressively filter
+            # local embedding results.
+            #
+            # Local embedding models often
+            # produce weaker similarity scores
+            # than OpenAI embeddings.
 
             retrieved_docs.append(
                 RetrievedDocument(
@@ -111,6 +159,9 @@ class Retriever:
         Convert retrieved docs into LLM context.
         """
 
+        if not retrieved_docs:
+            return ""
+
         context_blocks: list[str] = []
 
         for idx, doc in enumerate(
@@ -125,10 +176,21 @@ class Retriever:
             block = (
                 f"[Document {idx}]\n"
                 f"Source: {source}\n"
-                f"Similarity: {doc.score:.4f}\n\n"
+                f"Similarity: "
+                f"{doc.score:.4f}\n\n"
                 f"{doc.text}"
             )
 
             context_blocks.append(block)
 
-        return "\n\n".join(context_blocks)
+        final_context = "\n\n".join(
+            context_blocks
+        )
+
+        logger.info(
+            "Built context with %s documents.",
+            len(retrieved_docs),
+        )
+
+        return final_context
+

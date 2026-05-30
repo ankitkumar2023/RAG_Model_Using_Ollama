@@ -1,15 +1,19 @@
+
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
+import re
+import sys
 import tempfile
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import pdfplumber
 import streamlit as st
 from docx import Document
-from pypdf import PdfReader
 
 from config.logging_config import setup_logging
 from config.settings import get_settings
@@ -21,6 +25,15 @@ from src.api.schemas import (
 from src.utils.gpu_monitor import (
     SystemMonitor,
 )
+
+# =========================================================
+# WINDOWS ASYNCIO FIX
+# =========================================================
+
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(
+        asyncio.WindowsSelectorEventLoopPolicy()
+    )
 
 # =========================================================
 # INITIALIZATION
@@ -49,40 +62,116 @@ st.set_page_config(
 # SESSION STATE
 # =========================================================
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+DEFAULT_SESSION_STATE = {
+    "messages": [],
+    "uploaded_documents": {},
+    "retrieval_debug": [],
+    "guardrail_logs": [],
+}
 
-if "uploaded_documents" not in st.session_state:
-    st.session_state.uploaded_documents = []
-
-if "retrieval_debug" not in st.session_state:
-    st.session_state.retrieval_debug = []
-
-if "guardrail_logs" not in st.session_state:
-    st.session_state.guardrail_logs = []
+for key, value in (
+    DEFAULT_SESSION_STATE.items()
+):
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 # =========================================================
 # HELPERS
 # =========================================================
 
 
+def normalize_text(
+    text: str,
+) -> str:
+    """
+    Normalize extracted text.
+    """
+
+    text = re.sub(
+        r"\r\n",
+        "\n",
+        text,
+    )
+
+    text = re.sub(
+        r"\n{3,}",
+        "\n\n",
+        text,
+    )
+
+    text = re.sub(
+        r"[ \t]+",
+        " ",
+        text,
+    )
+
+    return text.strip()
+
+
 def extract_text_from_pdf(
     file_path: str,
 ) -> str:
     """
-    Extract PDF text.
+    Enterprise-grade PDF extraction.
     """
-
-    reader = PdfReader(file_path)
 
     text_parts: list[str] = []
 
-    for page in reader.pages:
-        text_parts.append(
-            page.extract_text() or ""
+    try:
+        with pdfplumber.open(
+            file_path
+        ) as pdf:
+            for page_idx, page in enumerate(
+                pdf.pages,
+                start=1,
+            ):
+                try:
+                    page_text = (
+                        page.extract_text(
+                            x_tolerance=2,
+                            y_tolerance=2,
+                        )
+                        or ""
+                    )
+
+                    page_text = normalize_text(
+                        page_text
+                    )
+
+                    if page_text:
+                        text_parts.append(
+                            f"\n\n--- PAGE {page_idx} ---\n\n"
+                            f"{page_text}"
+                        )
+
+                except Exception:
+                    logger.exception(
+                        "Failed to parse page %s",
+                        page_idx,
+                    )
+
+    except Exception:
+        logger.exception(
+            "PDF extraction failed."
         )
 
-    return "\n".join(text_parts)
+        raise
+
+    final_text = "\n".join(
+        text_parts
+    )
+
+    if not final_text.strip():
+        raise ValueError(
+            "No extractable text found in PDF."
+        )
+
+    logger.info(
+        "Extracted %s characters from PDF.",
+        len(final_text),
+    )
+
+    return final_text
 
 
 def extract_text_from_docx(
@@ -92,21 +181,39 @@ def extract_text_from_docx(
     Extract DOCX text.
     """
 
-    document = Document(file_path)
+    try:
+        document = Document(file_path)
 
-    return "\n".join(
-        [
-            paragraph.text
-            for paragraph in document.paragraphs
-        ]
-    )
+        text = "\n".join(
+            [
+                paragraph.text
+                for paragraph in document.paragraphs
+                if paragraph.text.strip()
+            ]
+        )
+
+        text = normalize_text(text)
+
+        logger.info(
+            "Extracted %s characters from DOCX.",
+            len(text),
+        )
+
+        return text
+
+    except Exception:
+        logger.exception(
+            "DOCX extraction failed."
+        )
+
+        raise
 
 
 def extract_uploaded_text(
     uploaded_file: Any,
 ) -> str:
     """
-    Process uploaded document.
+    Process uploaded document safely.
     """
 
     suffix = Path(
@@ -123,20 +230,51 @@ def extract_uploaded_text(
 
         temp_path = temp_file.name
 
-    if suffix == ".pdf":
-        return extract_text_from_pdf(
-            temp_path
-        )
-
-    if suffix == ".docx":
-        return extract_text_from_docx(
-            temp_path
-        )
-
-    return Path(temp_path).read_text(
-        encoding="utf-8",
-        errors="ignore",
+    logger.info(
+        "Temporary file created: %s",
+        temp_path,
     )
+
+    try:
+        if suffix == ".pdf":
+            return extract_text_from_pdf(
+                temp_path
+            )
+
+        if suffix == ".docx":
+            return extract_text_from_docx(
+                temp_path
+            )
+
+        text = Path(temp_path).read_text(
+            encoding="utf-8",
+            errors="ignore",
+        )
+
+        return normalize_text(text)
+
+    finally:
+        try:
+            Path(temp_path).unlink(
+                missing_ok=True
+            )
+
+        except Exception:
+            logger.warning(
+                "Temporary file cleanup failed."
+            )
+
+
+def generate_document_hash(
+    content: str,
+) -> str:
+    """
+    Generate deterministic hash.
+    """
+
+    return hashlib.sha256(
+        content.encode("utf-8")
+    ).hexdigest()
 
 
 async def process_chat_async(
@@ -182,15 +320,16 @@ async def upload_document_async(
     return response.model_dump()
 
 
-def run_async(
-    coro,
-):
+def run_async(coro):
     """
-    Execute async functions safely in Streamlit.
+    Execute async safely inside Streamlit.
     """
 
     try:
         loop = asyncio.get_event_loop()
+
+        if loop.is_closed():
+            raise RuntimeError
 
     except RuntimeError:
         loop = asyncio.new_event_loop()
@@ -199,7 +338,6 @@ def run_async(
     return loop.run_until_complete(
         coro
     )
-
 
 # =========================================================
 # SIDEBAR
@@ -230,7 +368,7 @@ Embedding Model:
     )
 
     # ==========================================
-    # RAG CONTROLS
+    # RAG SETTINGS
     # ==========================================
 
     st.subheader("RAG Settings")
@@ -240,44 +378,8 @@ Embedding Model:
         value=True,
     )
 
-    similarity_threshold = st.slider(
-        "Similarity Threshold",
-        min_value=0.0,
-        max_value=1.0,
-        value=float(
-            settings.similarity_threshold
-        ),
-        step=0.05,
-    )
-
-    # ==========================================
-    # TOOL CONTROLS
-    # ==========================================
-
-    st.subheader("Tool Controls")
-
     enable_tools = st.toggle(
         "Enable Tools",
-        value=True,
-    )
-
-    enable_weather = st.checkbox(
-        "Weather Tool",
-        value=True,
-    )
-
-    enable_stock = st.checkbox(
-        "Stock Tool",
-        value=True,
-    )
-
-    enable_web = st.checkbox(
-        "Web Search Tool",
-        value=True,
-    )
-
-    enable_calc = st.checkbox(
-        "Calculator Tool",
         value=True,
     )
 
@@ -289,25 +391,38 @@ Embedding Model:
 
     uploaded_files = st.file_uploader(
         "Upload documents",
-        type=[
-            "txt",
-            "pdf",
-            "docx",
-        ],
+        type=["txt", "pdf", "docx"],
         accept_multiple_files=True,
     )
 
     if uploaded_files:
         for uploaded_file in uploaded_files:
-            if uploaded_file.name in (
-                st.session_state.uploaded_documents
-            ):
-                continue
+            try:
+                file_bytes = (
+                    uploaded_file.getvalue()
+                )
 
-            with st.spinner(
-                f"Processing {uploaded_file.name}..."
-            ):
-                try:
+                file_hash = hashlib.sha256(
+                    file_bytes
+                ).hexdigest()
+
+                if (
+                    file_hash
+                    in st.session_state[
+                        "uploaded_documents"
+                    ]
+                ):
+                    st.warning(
+                        f"{uploaded_file.name} "
+                        f"already indexed."
+                    )
+
+                    continue
+
+                with st.spinner(
+                    f"Processing "
+                    f"{uploaded_file.name}..."
+                ):
                     text = extract_uploaded_text(
                         uploaded_file
                     )
@@ -319,9 +434,20 @@ Embedding Model:
                         )
                     )
 
+                    st.session_state[
+                        "uploaded_documents"
+                    ][file_hash] = {
+                        "filename": uploaded_file.name,
+                        "timestamp": str(
+                            datetime.now(UTC)
+                        ),
+                    }
+
                     st.success(
                         f"""
-Indexed:
+Indexed Successfully
+
+File:
 {uploaded_file.name}
 
 Chunks:
@@ -329,19 +455,15 @@ Chunks:
 """
                     )
 
-                    st.session_state.uploaded_documents.append(
-                        uploaded_file.name
-                    )
+            except Exception as exc:
+                logger.exception(
+                    "Upload failed."
+                )
 
-                except Exception as exc:
-                    logger.exception(
-                        "Upload failed."
-                    )
-
-                    st.error(str(exc))
+                st.error(str(exc))
 
     # ==========================================
-    # VECTOR DB MANAGEMENT
+    # VECTOR STORE
     # ==========================================
 
     st.subheader("Vector Store")
@@ -350,13 +472,23 @@ Chunks:
         "Reset Vector Database",
         type="secondary",
     ):
-        run_async(
-            router.vector_store.reset_collection()
-        )
+        try:
+            run_async(
+                router.vector_store.reset_collection()
+            )
 
-        st.success(
-            "Vector database cleared."
-        )
+            st.success(
+                "Vector database cleared."
+            )
+
+        except Exception:
+            logger.exception(
+                "Vector reset failed."
+            )
+
+            st.error(
+                "Failed to reset vector database."
+            )
 
     # ==========================================
     # SYSTEM METRICS
@@ -364,32 +496,38 @@ Chunks:
 
     st.subheader("System Metrics")
 
-    metrics = (
-        SystemMonitor.collect_metrics()
-    )
+    try:
+        metrics = (
+            SystemMonitor.collect_metrics()
+        )
 
-    st.metric(
-        "CPU Usage",
-        f"{metrics.cpu_percent:.1f}%",
-    )
-
-    st.metric(
-        "RAM Usage",
-        (
-            f"{metrics.ram_used_gb:.1f}"
-            f"/{metrics.ram_total_gb:.1f} GB"
-        ),
-    )
-
-    if metrics.gpu_name:
         st.metric(
-            "GPU Usage",
+            "CPU Usage",
+            f"{metrics.cpu_percent:.1f}%",
+        )
+
+        st.metric(
+            "RAM Usage",
             (
-                f"{metrics.gpu_utilization_percent:.1f}%"
+                f"{metrics.ram_used_gb:.1f}/"
+                f"{metrics.ram_total_gb:.1f} GB"
             ),
         )
 
-        st.caption(metrics.gpu_name)
+        if metrics.gpu_name:
+            st.metric(
+                "GPU Usage",
+                (
+                    f"{metrics.gpu_utilization_percent:.1f}%"
+                ),
+            )
+
+            st.caption(metrics.gpu_name)
+
+    except Exception:
+        logger.exception(
+            "Metrics collection failed."
+        )
 
 # =========================================================
 # MAIN UI
@@ -400,38 +538,45 @@ st.title(
 )
 
 st.caption(
-    "Production-grade Local Agentic RAG System"
+    "Enterprise Local Agentic RAG System"
 )
 
 # =========================================================
-# STATUS BAR
+# HEALTH STATUS
 # =========================================================
 
-health = run_async(
-    router.health_check()
-)
+try:
+    health = run_async(
+        router.health_check()
+    )
 
-col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-with col1:
-    st.success(
-        (
-            "Ollama Connected"
-            if health.ollama_connected
-            else "Ollama Offline"
+    with col1:
+        if health.ollama_connected:
+            st.success(
+                "Ollama Connected"
+            )
+        else:
+            st.error(
+                "Ollama Offline"
+            )
+
+    with col2:
+        st.info(
+            f"Indexed Docs: "
+            f"{health.vector_store_documents}"
         )
-    )
 
-with col2:
-    st.info(
-        f"Indexed Docs: "
-        f"{health.vector_store_documents}"
-    )
+    with col3:
+        st.info(
+            f"Environment: "
+            f"{settings.app_env}"
+        )
 
-with col3:
-    st.info(
-        f"Environment: "
-        f"{settings.app_env}"
+except Exception:
+    logger.exception(
+        "Health check failed."
     )
 
 st.markdown("---")
@@ -440,7 +585,9 @@ st.markdown("---")
 # CHAT HISTORY
 # =========================================================
 
-for message in st.session_state.messages:
+for message in (
+    st.session_state.messages
+):
     with st.chat_message(
         message["role"]
     ):
@@ -457,26 +604,20 @@ prompt = st.chat_input(
 )
 
 if prompt:
-    # ==========================================
-    # STORE USER MESSAGE
-    # ==========================================
+    user_message = {
+        "role": "user",
+        "content": prompt,
+        "timestamp": str(
+            datetime.now(UTC)
+        ),
+    }
 
     st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": prompt,
-            "timestamp": str(
-                datetime.utcnow()
-            ),
-        }
+        user_message
     )
 
     with st.chat_message("user"):
         st.markdown(prompt)
-
-    # ==========================================
-    # ASSISTANT PROCESSING
-    # ==========================================
 
     with st.chat_message(
         "assistant"
@@ -485,18 +626,16 @@ if prompt:
             st.empty()
         )
 
-        debug_expander = (
-            st.expander(
-                "Diagnostics",
-                expanded=False,
-            )
+        debug_expander = st.expander(
+            "Diagnostics",
+            expanded=False,
         )
 
-        with st.spinner(
-            "Running guardrails, retrieval, "
-            "and reasoning..."
-        ):
-            try:
+        try:
+            with st.spinner(
+                "Running retrieval, "
+                "guardrails, and reasoning..."
+            ):
                 result = run_async(
                     process_chat_async(
                         query=prompt,
@@ -505,91 +644,83 @@ if prompt:
                     )
                 )
 
-                final_response = result[
-                    "response"
-                ]
+            final_response = result.get(
+                "response",
+                "No response generated.",
+            )
 
-                response_placeholder.markdown(
-                    final_response
+            response_placeholder.markdown(
+                final_response
+            )
+
+            with debug_expander:
+                st.subheader(
+                    "Guardrail Status"
                 )
 
-                with debug_expander:
-                    st.subheader(
-                        "Guardrail Status"
+                if result.get(
+                    "guardrail_passed",
+                    False,
+                ):
+                    st.success(
+                        "Safety checks passed."
+                    )
+                else:
+                    st.error(
+                        "Guardrail violation."
                     )
 
-                    if result[
-                        "guardrail_passed"
-                    ]:
-                        st.success(
-                            "Safety checks passed."
-                        )
-                    else:
-                        st.error(
-                            "Guardrail violation."
-                        )
-
-                    st.subheader(
-                        "Retrieval"
-                    )
-
-                    st.write(
-                        (
-                            "Retrieved Documents: "
-                            f"{result['retrieved_documents']}"
-                        )
-                    )
-
-                    st.subheader(
-                        "Generation"
-                    )
-
-                    st.write(
-                        (
-                            "Model Used: "
-                            f"{result['model']}"
-                        )
-                    )
-
-                    st.subheader(
-                        "Tools"
-                    )
-
-                    if result[
-                        "tools_used"
-                    ]:
-                        st.write(
-                            result[
-                                "tools_used"
-                            ]
-                        )
-                    else:
-                        st.write(
-                            "No tools used."
-                        )
-
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": final_response,
-                        "timestamp": str(
-                            datetime.utcnow()
-                        ),
-                    }
+                st.subheader(
+                    "Retrieval"
                 )
 
-            except Exception as exc:
-                logger.exception(
-                    "Chat processing failed."
+                st.write(
+                    f"Retrieved Documents: "
+                    f"{result.get('retrieved_documents', 0)}"
                 )
 
-                error_message = (
-                    f"System Error: {str(exc)}"
+                retrieved_context = (
+                    result.get(
+                        "retrieved_context",
+                        "",
+                    )
                 )
 
-                response_placeholder.error(
-                    error_message
+                if retrieved_context:
+                    st.code(
+                        retrieved_context,
+                        language="text",
+                    )
+
+                st.subheader(
+                    "Generation"
                 )
+
+                st.write(
+                    f"Model Used: "
+                    f"{result.get('model', 'unknown')}"
+                )
+
+            assistant_message = {
+                "role": "assistant",
+                "content": final_response,
+                "timestamp": str(
+                    datetime.now(UTC)
+                ),
+            }
+
+            st.session_state.messages.append(
+                assistant_message
+            )
+
+        except Exception as exc:
+            logger.exception(
+                "Chat processing failed."
+            )
+
+            response_placeholder.error(
+                f"System Error: {str(exc)}"
+            )
 
 # =========================================================
 # FOOTER
@@ -601,3 +732,4 @@ st.caption(
     "Built with Ollama + Qwen2.5 + "
     "Llama Guard + ChromaDB + Streamlit"
 )
+

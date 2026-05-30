@@ -1,0 +1,90 @@
+2026-05-30 23:03:21 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:03:23 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:03:33 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:04:13 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:04:13 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:04:14 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:04:14 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:04:14 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:04:16 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:11:58 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:11:58 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:11:59 | INFO | src.rag.chunking | chunking.py:97 | Generated 1 chunks.
+2026-05-30 23:12:03 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 1/1
+2026-05-30 23:12:03 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 1 documents into vector store.
+2026-05-30 23:12:03 | INFO | src.api.routes | routes.py:153 | Document uploaded successfully.
+2026-05-30 23:12:04 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:12:30 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:12:31 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:12:32 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:12:55 | INFO | src.rag.retrieval | retrieval.py:99 | Retrieved 0 relevant documents.
+2026-05-30 23:13:44 | INFO | src.api.routes | routes.py:338 | Chat orchestration completed.
+2026-05-30 23:14:38 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-30 23:14:38 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-30 23:14:40 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-30 23:14:44 | INFO | src.rag.retrieval | retrieval.py:99 | Retrieved 0 relevant documents.
+2026-05-30 23:16:00 | INFO | src.api.routes | routes.py:338 | Chat orchestration completed.
+2026-05-30 23:42:34 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-30 23:42:34 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down
+2026-05-30 23:42:34 | ERROR | asyncio | base_events.py:1820 | Cancelling an overlapped future failed
+future: <_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+2026-05-30 23:42:34 | ERROR | asyncio | base_events.py:1853 | Exception in default exception handler
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\windows_events.py", line 72, in _cancel_overlapped
+    self._ov.cancel()
+OSError: [WinError 6] The handle is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1846, in call_exception_handler
+    self.default_exception_handler(context)
+  File "C:\Python312\Lib\asyncio\base_events.py", line 1820, in default_exception_handler
+    logger.error('\n'.join(log_lines), exc_info=exc_info)
+  File "C:\Python312\Lib\logging\__init__.py", line 1568, in error
+    self._log(ERROR, msg, args, **kwargs)
+  File "C:\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+  File "C:\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+  File "E:\AI-ML\Rapid_Prototyping\venv\Lib\site-packages\rich\logging.py", line 150, in emit
+    from .traceback import Traceback
+ImportError: sys.meta_path is None, Python is likely shutting down

@@ -329,50 +329,7 @@ Rewritten Query:
         # PROMPT BUILDING
         # ==========================================
 
-        final_prompt = f"""
-{RAG_SYSTEM_PROMPT}
-
-===========================================================
-RETRIEVED CONTEXT
-===========================================================
-
-{rag_context}
-
-===========================================================
-USER QUESTION
-===========================================================
-
-{request.query}
-
-===========================================================
-CRITICAL INSTRUCTIONS
-===========================================================
-
-1. Answer ONLY using retrieved context.
-
-2. If answer exists in retrieved context:
-   - answer directly
-   - do NOT ask follow-up questions
-   - do NOT say information is missing
-
-3. Preserve exact:
-   - percentages
-   - dates
-   - numbers
-   - grading values
-   - names
-
-4. If answer does NOT exist in context:
-   respond with:
-   "The uploaded documents do not contain this information."
-
-5. Keep answer concise and factual.
-
-===========================================================
-FINAL ANSWER
-===========================================================
-"""
-
+        final_prompt = f""" {RAG_SYSTEM_PROMPT} =========================================================== RETRIEVED CONTEXT =========================================================== {rag_context} =========================================================== USER QUESTION =========================================================== {request.query} =========================================================== RESPONSE GENERATION RULES =========================================================== You are an enterprise-grade AI assistant. Your task is to answer the user's question using ONLY the retrieved context above. IMPORTANT RULES: 1. The answer MUST be grounded in the retrieved context. 2. DO NOT hallucinate or invent information. 3. If the answer exists in the retrieved context: - provide a polished natural-language response - make the response professional and human-friendly - include contextual wording when appropriate - preserve all factual values exactly 4. DO NOT respond with: - raw numbers only - bullet fragments - incomplete phrases 5. Prefer complete sentences. 6. Keep answers concise BUT informative. 7. If the retrieved context mentions: - institution name - course name - organization - program details then naturally incorporate them into the answer. 8. If the answer does NOT exist in the context, respond EXACTLY with: "The uploaded documents do not contain this information." =========================================================== GOOD RESPONSE EXAMPLES =========================================================== Question: How many trimesters does the program comprise? Good Answer: The IIT Patna Artificial Intelligence & Machine Learning program comprises 3 trimesters. ----------------------------------------------------------- Question: What percentage does the offline exam contribute? Good Answer: The End of Program Offline Exam contributes 30% to the overall grading scheme. =========================================================== FINAL ANSWER =========================================================== """
         logger.info(
             "Final prompt generated successfully."
         )

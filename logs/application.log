@@ -511,3 +511,41 @@ ImportError: sys.meta_path is None, Python is likely shutting down
 2026-05-31 00:55:34 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
 2026-05-31 00:55:35 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
 2026-05-31 00:56:59 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 00:57:00 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 00:57:01 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 00:57:23 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 00:57:48 | INFO | src.api.routes | routes.py:275 | Original Query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:57:48 | INFO | src.api.routes | routes.py:280 | Rewritten Query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:57:48 | INFO | src.rag.retrieval | retrieval.py:53 | Starting retrieval for query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:94 | Raw retrieval results count: 3
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the bette
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 E
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:121 | Retrieved document | Score=0.0000 | Source=grading_creteria.pdf | Preview= 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 E
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:150 | Retrieved 3 relevant documents.
+2026-05-31 00:57:56 | INFO | src.api.routes | routes.py:304 | Retrieved 3 documents.
+2026-05-31 00:57:56 | INFO | src.rag.retrieval | retrieval.py:193 | Built context with 3 documents.
+2026-05-31 00:57:56 | INFO | src.api.routes | routes.py:315 | Retrieved Context:
+[Document 1]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna, which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 2]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 3]
+Source: grading_creteria.pdf
+Similarity: 0.0000
+
+ 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+2026-05-31 00:57:56 | INFO | src.api.routes | routes.py:376 | Final prompt generated successfully.
+2026-05-31 00:58:26 | INFO | src.api.routes | routes.py:398 | Raw model response:
+The End of Program Offline Exam contributes 10% to the grading scheme.
+2026-05-31 00:58:26 | INFO | src.api.routes | routes.py:430 | Cleaned response:
+The End of Program Offline Exam contributes 10% to the grading scheme.
+2026-05-31 00:58:49 | INFO | src.api.routes | routes.py:452 | Output moderation result: safe
+2026-05-31 00:58:49 | INFO | src.api.routes | routes.py:470 | Chat orchestration completed successfully.

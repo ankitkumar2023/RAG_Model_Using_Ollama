@@ -112,63 +112,226 @@ def extract_text_from_pdf(
     file_path: str,
 ) -> str:
     """
-    Enterprise-grade PDF extraction.
+    Enterprise-grade PDF extraction pipeline.
+
+    Features:
+    - Layout-aware extraction
+    - Table-aware extraction
+    - Hybrid parsing
+    - Semantic structure preservation
+    - Retrieval optimization
+    - OCR-friendly normalization
     """
 
     text_parts: list[str] = []
 
+    logger.info(
+        "Starting enterprise PDF extraction."
+    )
+
     try:
-        with pdfplumber.open(
-            file_path
-        ) as pdf:
+        with pdfplumber.open(file_path) as pdf:
+
+            logger.info(
+                "PDF contains %s pages.",
+                len(pdf.pages),
+            )
+
             for page_idx, page in enumerate(
                 pdf.pages,
                 start=1,
             ):
+                logger.info(
+                    "Processing page %s",
+                    page_idx,
+                )
+
+                page_sections: list[str] = []
+
+                # =====================================================
+                # STANDARD TEXT EXTRACTION
+                # =====================================================
+
                 try:
-                    page_text = (
+                    extracted_text = (
                         page.extract_text(
                             x_tolerance=2,
                             y_tolerance=2,
+                            layout=True,
                         )
                         or ""
                     )
 
-                    page_text = normalize_text(
-                        page_text
+                    extracted_text = normalize_text(
+                        extracted_text
                     )
 
-                    if page_text:
-                        text_parts.append(
-                            f"\n\n--- PAGE {page_idx} ---\n\n"
-                            f"{page_text}"
+                    if extracted_text:
+                        page_sections.append(
+                            "[TEXT CONTENT]\n\n"
+                            f"{extracted_text}"
+                        )
+
+                        logger.info(
+                            "Extracted %s text chars "
+                            "from page %s",
+                            len(extracted_text),
+                            page_idx,
                         )
 
                 except Exception:
                     logger.exception(
-                        "Failed to parse page %s",
+                        "Standard extraction failed "
+                        "for page %s",
                         page_idx,
+                    )
+
+                # =====================================================
+                # TABLE EXTRACTION
+                # =====================================================
+
+                try:
+                    tables = (
+                        page.extract_tables()
+                    )
+
+                    logger.info(
+                        "Detected %s tables "
+                        "on page %s",
+                        len(tables),
+                        page_idx,
+                    )
+
+                    for table_idx, table in enumerate(
+                        tables,
+                        start=1,
+                    ):
+                        if not table:
+                            continue
+
+                        structured_rows = []
+
+                        for row in table:
+                            if not row:
+                                continue
+
+                            cleaned_cells = []
+
+                            for cell in row:
+                                if cell is None:
+                                    cleaned_cells.append(
+                                        ""
+                                    )
+                                else:
+                                    cleaned_cells.append(
+                                        normalize_text(
+                                            str(cell)
+                                        )
+                                    )
+
+                            if not any(
+                                cleaned_cells
+                            ):
+                                continue
+
+                            row_text = (
+                                " | ".join(
+                                    cleaned_cells
+                                )
+                            )
+
+                            structured_rows.append(
+                                row_text
+                            )
+
+                        if structured_rows:
+                            table_block = (
+                                f"[TABLE {table_idx}]\n\n"
+                                f"{chr(10).join(structured_rows)}"
+                            )
+
+                            page_sections.append(
+                                table_block
+                            )
+
+                            logger.info(
+                                "Processed table %s "
+                                "with %s rows.",
+                                table_idx,
+                                len(structured_rows),
+                            )
+
+                except Exception:
+                    logger.exception(
+                        "Table extraction failed "
+                        "for page %s",
+                        page_idx,
+                    )
+
+                # =====================================================
+                # PAGE CONSOLIDATION
+                # =====================================================
+
+                if page_sections:
+                    page_content = (
+                        "\n\n".join(
+                            page_sections
+                        )
+                    )
+
+                    page_block = (
+                        f"\n\n"
+                        f"================ PAGE "
+                        f"{page_idx} "
+                        f"================\n\n"
+                        f"{page_content}"
+                    )
+
+                    text_parts.append(
+                        page_block
                     )
 
     except Exception:
         logger.exception(
-            "PDF extraction failed."
+            "Enterprise PDF extraction failed."
         )
 
         raise
+
+    # =========================================================
+    # FINAL NORMALIZATION
+    # =========================================================
 
     final_text = "\n".join(
         text_parts
     )
 
-    if not final_text.strip():
+    final_text = re.sub(
+        r"\n{3,}",
+        "\n\n",
+        final_text,
+    )
+
+    final_text = re.sub(
+        r"[ \t]+",
+        " ",
+        final_text,
+    )
+
+    final_text = final_text.strip()
+
+    logger.info(
+        "Final extracted text size: %s chars",
+        len(final_text),
+    )
+
+    if not final_text:
         raise ValueError(
             "No extractable text found in PDF."
         )
 
     logger.info(
-        "Extracted %s characters from PDF.",
-        len(final_text),
+        "Enterprise PDF extraction completed."
     )
 
     return final_text
@@ -348,10 +511,6 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # ==========================================
-    # MODEL INFO
-    # ==========================================
-
     st.subheader("Models")
 
     st.info(
@@ -367,10 +526,6 @@ Embedding Model:
 """
     )
 
-    # ==========================================
-    # RAG SETTINGS
-    # ==========================================
-
     st.subheader("RAG Settings")
 
     use_rag = st.toggle(
@@ -382,10 +537,6 @@ Embedding Model:
         "Enable Tools",
         value=True,
     )
-
-    # ==========================================
-    # DOCUMENT UPLOAD
-    # ==========================================
 
     st.subheader("Document Upload")
 
@@ -462,10 +613,6 @@ Chunks:
 
                 st.error(str(exc))
 
-    # ==========================================
-    # VECTOR STORE
-    # ==========================================
-
     st.subheader("Vector Store")
 
     if st.button(
@@ -489,10 +636,6 @@ Chunks:
             st.error(
                 "Failed to reset vector database."
             )
-
-    # ==========================================
-    # SYSTEM METRICS
-    # ==========================================
 
     st.subheader("System Metrics")
 
@@ -541,10 +684,6 @@ st.caption(
     "Enterprise Local Agentic RAG System"
 )
 
-# =========================================================
-# HEALTH STATUS
-# =========================================================
-
 try:
     health = run_async(
         router.health_check()
@@ -581,10 +720,6 @@ except Exception:
 
 st.markdown("---")
 
-# =========================================================
-# CHAT HISTORY
-# =========================================================
-
 for message in (
     st.session_state.messages
 ):
@@ -594,10 +729,6 @@ for message in (
         st.markdown(
             message["content"]
         )
-
-# =========================================================
-# USER INPUT
-# =========================================================
 
 prompt = st.chat_input(
     "Ask anything..."
@@ -721,10 +852,6 @@ if prompt:
             response_placeholder.error(
                 f"System Error: {str(exc)}"
             )
-
-# =========================================================
-# FOOTER
-# =========================================================
 
 st.markdown("---")
 

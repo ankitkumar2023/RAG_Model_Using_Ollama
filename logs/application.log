@@ -549,3 +549,108 @@ The End of Program Offline Exam contributes 10% to the grading scheme.
 The End of Program Offline Exam contributes 10% to the grading scheme.
 2026-05-31 00:58:49 | INFO | src.api.routes | routes.py:452 | Output moderation result: safe
 2026-05-31 00:58:49 | INFO | src.api.routes | routes.py:470 | Chat orchestration completed successfully.
+2026-05-31 01:16:01 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 01:16:03 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 01:16:07 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 01:16:22 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 01:16:23 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 01:16:23 | INFO | __main__ | main.py:396 | Temporary file created: C:\Users\anamo\AppData\Local\Temp\tmphwt1rfor.pdf
+2026-05-31 01:16:23 | INFO | __main__ | main.py:128 | Starting enterprise PDF extraction.
+2026-05-31 01:16:23 | INFO | __main__ | main.py:135 | PDF contains 2 pages.
+2026-05-31 01:16:23 | INFO | __main__ | main.py:144 | Processing page 1
+2026-05-31 01:16:24 | INFO | __main__ | main.py:175 | Extracted 971 text chars from page 1
+2026-05-31 01:16:24 | INFO | __main__ | main.py:198 | Detected 3 tables on page 1
+2026-05-31 01:16:24 | INFO | __main__ | main.py:257 | Processed table 1 with 3 rows.
+2026-05-31 01:16:24 | INFO | __main__ | main.py:257 | Processed table 2 with 3 rows.
+2026-05-31 01:16:24 | INFO | __main__ | main.py:257 | Processed table 3 with 3 rows.
+2026-05-31 01:16:24 | INFO | __main__ | main.py:144 | Processing page 2
+2026-05-31 01:16:25 | INFO | __main__ | main.py:175 | Extracted 1016 text chars from page 2
+2026-05-31 01:16:25 | INFO | __main__ | main.py:198 | Detected 3 tables on page 2
+2026-05-31 01:16:25 | INFO | __main__ | main.py:257 | Processed table 1 with 3 rows.
+2026-05-31 01:16:25 | INFO | __main__ | main.py:257 | Processed table 2 with 3 rows.
+2026-05-31 01:16:25 | INFO | __main__ | main.py:257 | Processed table 3 with 2 rows.
+2026-05-31 01:16:25 | INFO | __main__ | main.py:323 | Final extracted text size: 3036 chars
+2026-05-31 01:16:25 | INFO | __main__ | main.py:333 | Enterprise PDF extraction completed.
+2026-05-31 01:16:25 | INFO | src.rag.chunking | chunking.py:97 | Generated 7 chunks.
+2026-05-31 01:16:28 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 7/7
+2026-05-31 01:16:28 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 7 documents into vector store.
+2026-05-31 01:16:28 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
+2026-05-31 01:16:30 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 01:16:55 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 01:16:56 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 01:16:57 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 01:17:24 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 01:17:44 | INFO | src.api.routes | routes.py:275 | Original Query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 01:17:44 | INFO | src.api.routes | routes.py:280 | Rewritten Query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 01:17:44 | INFO | src.rag.retrieval | retrieval.py:53 | Starting retrieval for query: What percentage does the End of Program Offline Exam contribute to the grading scheme?
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:94 | Raw retrieval results count: 3
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=198.6199 | Source=grading_creteria.pdf | Preview=: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna, which may include adjustments to the course schedule, merging of batches, or ot
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=244.1438 | Source=grading_creteria.pdf | Preview= Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the bette
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=249.4936 | Source=grading_creteria.pdf | Preview= Trimester 3 - End of Program - End Event Name Mid Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Off
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:147 | Retrieved 3 relevant documents.
+2026-05-31 01:17:52 | INFO | src.api.routes | routes.py:304 | Retrieved 3 documents.
+2026-05-31 01:17:52 | INFO | src.rag.retrieval | retrieval.py:190 | Built context with 3 documents.
+2026-05-31 01:17:52 | INFO | src.api.routes | routes.py:315 | Retrieved Context:
+[Document 1]
+Source: grading_creteria.pdf
+Similarity: 198.6199
+
+: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna, which may include adjustments to the course schedule, merging of batches, or other modifications. 2 [TABLE 1] Trimester-3 | | | | Event Name | Trimester 3 - Mid Module Evaluation | Trimester 3 - End Module Evaluation | End of Program - Offline exam | Trimester 3 - End Trimester Project Weightage % | 7 | 8 | 30 | 10 [TABLE 2
+
+[Document 2]
+Source: grading_creteria.pdf
+Similarity: 244.1438
+
+ Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna, which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 3]
+Source: grading_creteria.pdf
+Similarity: 249.4936
+
+ Trimester 3 - End of Program - End Event Name Mid Module End Module Offline exam Trimester Evaluation Evaluation Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the
+2026-05-31 01:17:52 | INFO | src.api.routes | routes.py:376 | Final prompt generated successfully.
+2026-05-31 01:18:15 | INFO | src.api.routes | routes.py:398 | Raw model response:
+- 30%
+2026-05-31 01:18:15 | INFO | src.api.routes | routes.py:430 | Cleaned response:
+- 30%
+2026-05-31 01:18:40 | INFO | src.api.routes | routes.py:452 | Output moderation result: safe
+2026-05-31 01:18:40 | INFO | src.api.routes | routes.py:470 | Chat orchestration completed successfully.
+2026-05-31 01:20:05 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 01:20:06 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 01:20:08 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 01:20:12 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 01:20:33 | INFO | src.api.routes | routes.py:275 | Original Query: The program comprises how many Trimesters ?
+2026-05-31 01:20:33 | INFO | src.api.routes | routes.py:280 | Rewritten Query: The program comprises how many trimesters?
+2026-05-31 01:20:33 | INFO | src.rag.retrieval | retrieval.py:53 | Starting retrieval for query: The program comprises how many trimesters?
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:94 | Raw retrieval results count: 3
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=384.5938 | Source=grading_creteria.pdf | Preview=--- PAGE 1 --- NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intellig
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=393.2371 | Source=grading_creteria.pdf | Preview=NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intelligence & Machine 
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=394.3687 | Source=grading_creteria.pdf | Preview================= PAGE 1 ================ [TEXT CONTENT] NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Gradi
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:147 | Retrieved 3 relevant documents.
+2026-05-31 01:20:41 | INFO | src.api.routes | routes.py:304 | Retrieved 3 documents.
+2026-05-31 01:20:41 | INFO | src.rag.retrieval | retrieval.py:190 | Built context with 3 documents.
+2026-05-31 01:20:41 | INFO | src.api.routes | routes.py:315 | Retrieved Context:
+[Document 1]
+Source: grading_creteria.pdf
+Similarity: 384.5938
+
+--- PAGE 1 --- NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intelligence & Machine Learning Vishleshan i-HUB IIT Patna The program comprises 3 Trimesters, each designed to assess your understanding through both individual and collaborative components. Trimester-wise Evaluation Structure Each Trimester includes the following evaluations: Evaluations 80% Projects 20% Total 100% Passing criteria: >=3.5 CGPA Placement assistance: >= 7 CGPA There are a total of 3 Trimester Trimester-1 Trimester 1 - Mid Module Trimester 1 - End Module Event Name Evaluation Evaluation
+
+[Document 2]
+Source: grading_creteria.pdf
+Similarity: 393.2371
+
+NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intelligence & Machine Learning Vishleshan i-HUB IIT Patna The program comprises 3 Trimesters, each designed to assess your understanding through both individual and collaborative components. Trimester-wise Evaluation Structure Each Trimester includes the following evaluations: Passing criteria : >=3.5 CGPA Placement assistance: >= 7 CGPA There are a total of 3 Trimester Trimester-1 Event Name Trimester 1 - Mid Module Evaluation Trimester 1 - End Module Evaluation Weightage % 10 10 Trimester-2 Event Name Trimester 2 - Mid Module Evaluation Trimester 2 - End Module Evaluation Trimester 2 - End Trimester Project Weightage % 7 8 10 1 Evaluations 80% Projects 20% Total 100% NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Trimester-3 Event Name Trimester 3 - Mid Module Evaluation Trimester 3 - End Module Evaluation End of Program - Offline exam Trimester 3 - End Trimester Project Weightage % 7 8 30 10 Note: ● Each evaluation (except the End of Program - Offline Exam) will allow two attempts, with the better score being considered. The End of Program - Offline Exam will not have this best-of-two option. ● Evaluations may consist of objective questions, open-ended (subjective) questions,coding, video recordings, etc. Disclaimer Changes to the Grading Policy: This grading structure is subject to change at the discretion of the Academic Committee at Vishleshan i-HUB IIT Patna , which may include adjustments to the course schedule, merging of batches, or other modifications. 2
+
+[Document 3]
+Source: grading_creteria.pdf
+Similarity: 394.3687
+
+================ PAGE 1 ================ [TEXT CONTENT] NOLAN EDUTECH PRIVATE LIMITED Incubex, Ground, 1st, 2nd Floor, No 1178, 5th Main Road, Sector 7, HSR Layout, Bengaluru, Karnataka 560102 ` Grading Policy – IIT Patna Artificial Intelligence & Machine Learning Vishleshan i-HUB IIT Patna The program comprises 3 Trimesters, each designed to a
+2026-05-31 01:20:41 | INFO | src.api.routes | routes.py:376 | Final prompt generated successfully.
+2026-05-31 01:21:10 | INFO | src.api.routes | routes.py:398 | Raw model response:
+- 3 Trimesters
+2026-05-31 01:21:10 | INFO | src.api.routes | routes.py:430 | Cleaned response:
+- 3 Trimesters
+2026-05-31 01:21:33 | INFO | src.api.routes | routes.py:452 | Output moderation result: safe
+2026-05-31 01:21:33 | INFO | src.api.routes | routes.py:470 | Chat orchestration completed successfully.

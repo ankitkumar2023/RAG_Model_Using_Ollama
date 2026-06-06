@@ -139,4 +139,5 @@ Everything is implemented explicitly for:
 - full transparency
 - performance tuning
 - enterprise maintainability
-- production debugging
+- production debugging      
+- solving the problem with example approach

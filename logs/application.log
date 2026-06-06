@@ -943,3 +943,69 @@ A student with an 8.5 CGPA receives a Silver tier scholarship, which provides a 
 A student with an 8.5 CGPA receives a Silver tier scholarship, which provides a 50% scholarship amount.
 2026-05-31 01:47:12 | INFO | src.api.routes | routes.py:409 | Output moderation result: safe
 2026-05-31 01:47:12 | INFO | src.api.routes | routes.py:427 | Chat orchestration completed successfully.
+2026-05-31 03:36:32 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 03:36:34 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 03:36:37 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 03:36:49 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 03:36:50 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:396 | Temporary file created: C:\Users\anamo\AppData\Local\Temp\tmpmo56wqa3.pdf
+2026-05-31 03:36:50 | INFO | __main__ | main.py:128 | Starting enterprise PDF extraction.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:135 | PDF contains 3 pages.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:144 | Processing page 1
+2026-05-31 03:36:50 | INFO | __main__ | main.py:175 | Extracted 793 text chars from page 1
+2026-05-31 03:36:50 | INFO | __main__ | main.py:198 | Detected 1 tables on page 1
+2026-05-31 03:36:50 | INFO | __main__ | main.py:257 | Processed table 1 with 5 rows.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:144 | Processing page 2
+2026-05-31 03:36:50 | INFO | __main__ | main.py:175 | Extracted 568 text chars from page 2
+2026-05-31 03:36:50 | INFO | __main__ | main.py:198 | Detected 1 tables on page 2
+2026-05-31 03:36:50 | INFO | __main__ | main.py:257 | Processed table 1 with 6 rows.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:144 | Processing page 3
+2026-05-31 03:36:50 | INFO | __main__ | main.py:175 | Extracted 564 text chars from page 3
+2026-05-31 03:36:50 | INFO | __main__ | main.py:198 | Detected 1 tables on page 3
+2026-05-31 03:36:50 | INFO | __main__ | main.py:257 | Processed table 1 with 4 rows.
+2026-05-31 03:36:50 | INFO | __main__ | main.py:323 | Final extracted text size: 2595 chars
+2026-05-31 03:36:50 | INFO | __main__ | main.py:333 | Enterprise PDF extraction completed.
+2026-05-31 03:36:50 | INFO | src.rag.chunking | chunking.py:97 | Generated 5 chunks.
+2026-05-31 03:36:55 | INFO | src.rag.embeddings | embeddings.py:57 | Embedded batch 5/5
+2026-05-31 03:36:55 | INFO | src.rag.vector_store | vector_store.py:65 | Inserted 5 documents into vector store.
+2026-05-31 03:36:55 | INFO | src.api.routes | routes.py:139 | Document uploaded successfully.
+2026-05-31 03:36:56 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 03:37:33 | INFO | config.logging_config | logging_config.py:69 | Logging system initialized.
+2026-05-31 03:37:34 | INFO | src.rag.vector_store | vector_store.py:37 | Vector store initialized.
+2026-05-31 03:37:35 | INFO | src.utils.gpu_monitor | gpu_monitor.py:134 | System metrics collected.
+2026-05-31 03:38:06 | INFO | src.api.routes | routes.py:213 | Input moderation result: safe
+2026-05-31 03:38:32 | INFO | src.api.routes | routes.py:275 | Original Query:  What scholarship does a student with 8.5 CGPA receive?
+2026-05-31 03:38:32 | INFO | src.api.routes | routes.py:280 | Rewritten Query: What scholarship does a student with an 8.5 CGPA receive?
+2026-05-31 03:38:32 | INFO | src.rag.retrieval | retrieval.py:53 | Starting retrieval for query: What scholarship does a student with an 8.5 CGPA receive?
+2026-05-31 03:38:39 | INFO | src.rag.retrieval | retrieval.py:94 | Raw retrieval results count: 3
+2026-05-31 03:38:40 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=268.2762 | Source=enterprise_rag_demo.pdf | Preview=1 | End Module Evaluation | 10% Semester 2 | Project Submission | 20% Semester 3 | Offline Final Exam | 30% Semester 3 | Capstone Project | 20% ================ PAGE 3 ================ [TEXT CONTENT] 
+2026-05-31 03:38:40 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=268.2762 | Source=enterprise_rag_demo.pdf | Preview=1 | End Module Evaluation | 10% Semester 2 | Project Submission | 20% Semester 3 | Offline Final Exam | 30% Semester 3 | Capstone Project | 20% ================ PAGE 3 ================ [TEXT CONTENT] 
+2026-05-31 03:38:40 | INFO | src.rag.retrieval | retrieval.py:118 | Retrieved document | Score=317.0115 | Source=enterprise_rag_demo.pdf | Preview= highest package reached 32 LPA. Students are encouraged to complete all capstone projects and actively participate in mentorship sessions to maximize placement opportunities. Scholarship Tier Minimum
+2026-05-31 03:38:40 | INFO | src.rag.retrieval | retrieval.py:147 | Retrieved 3 relevant documents.
+2026-05-31 03:38:40 | INFO | src.api.routes | routes.py:304 | Retrieved 3 documents.
+2026-05-31 03:38:40 | INFO | src.rag.retrieval | retrieval.py:190 | Built context with 3 documents.
+2026-05-31 03:38:40 | INFO | src.api.routes | routes.py:315 | Retrieved Context:
+[Document 1]
+Source: enterprise_rag_demo.pdf
+Similarity: 268.2762
+
+1 | End Module Evaluation | 10% Semester 2 | Project Submission | 20% Semester 3 | Offline Final Exam | 30% Semester 3 | Capstone Project | 20% ================ PAGE 3 ================ [TEXT CONTENT] Scholarships & Placement Information Students scoring above 8.5 CGPA become eligible for merit-based scholarships. The top recruiters associated with the program include Microsoft, Amazon, Infosys, and TCS. The average placement package for the 2025 cohort was 14 LPA, while the highest package reached 32 LPA. Students are
+
+[Document 2]
+Source: enterprise_rag_demo.pdf
+Similarity: 268.2762
+
+1 | End Module Evaluation | 10% Semester 2 | Project Submission | 20% Semester 3 | Offline Final Exam | 30% Semester 3 | Capstone Project | 20% ================ PAGE 3 ================ [TEXT CONTENT] Scholarships & Placement Information Students scoring above 8.5 CGPA become eligible for merit-based scholarships. The top recruiters associated with the program include Microsoft, Amazon, Infosys, and TCS. The average placement package for the 2025 cohort was 14 LPA, while the highest package reached 32 LPA. Students are
+
+[Document 3]
+Source: enterprise_rag_demo.pdf
+Similarity: 317.0115
+
+ highest package reached 32 LPA. Students are encouraged to complete all capstone projects and actively participate in mentorship sessions to maximize placement opportunities. Scholarship Tier Minimum CGPA Scholarship Amount Gold 9.0 100% Silver 8.5 50% Bronze 8.0 25% [TABLE 1] Scholarship Tier | Minimum CGPA | Scholarship Amount Gold | 9.0 | 100% Silver | 8.5 | 50% Bronze | 8.0 | 25%
+2026-05-31 03:38:40 | INFO | src.api.routes | routes.py:333 | Final prompt generated successfully.
+2026-05-31 03:39:11 | INFO | src.api.routes | routes.py:355 | Raw model response:
+A student with 8.5 CGPA receives a 50% scholarship.
+2026-05-31 03:39:11 | INFO | src.api.routes | routes.py:387 | Cleaned response:
+A student with 8.5 CGPA receives a 50% scholarship.
+2026-05-31 03:39:39 | INFO | src.api.routes | routes.py:409 | Output moderation result: safe
+2026-05-31 03:39:39 | INFO | src.api.routes | routes.py:427 | Chat orchestration completed successfully.

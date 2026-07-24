@@ -52,24 +52,51 @@ class GeminiClient:
 
         self.api_key = settings.gemini_api_key.get_secret_value()
 
+        # Keyed by (model, temperature, top_p, top_k, max_output_tokens).
+        # `GeminiClient` is a long-lived, process-wide singleton (cached
+        # via st.cache_resource in main.py), so caching the underlying
+        # ChatGoogleGenerativeAI/async HTTP client here means each
+        # distinct parameter combination is created once and reused --
+        # not recreated and abandoned on every single call. Without
+        # this, each throwaway client's async session was only ever
+        # closed via __del__-triggered garbage collection, which is
+        # racy in asyncio and was logging "Task was destroyed but it is
+        # pending!" after every request.
+        self._llm_cache: dict[tuple, ChatGoogleGenerativeAI] = {}
+
     def _get_llm(
         self,
         model: str | None = None,
         **generation_kwargs: Any,
     ) -> ChatGoogleGenerativeAI:
-        return ChatGoogleGenerativeAI(
-            model=model or settings.primary_model,
+        model_name = model or settings.primary_model
+        temperature = generation_kwargs.get("temperature", settings.temperature)
+        top_p = generation_kwargs.get("top_p", settings.top_p)
+        top_k = generation_kwargs.get("top_k", settings.top_k)
+        max_output_tokens = generation_kwargs.get(
+            "max_output_tokens", settings.max_tokens
+        )
+
+        cache_key = (model_name, temperature, top_p, top_k, max_output_tokens)
+
+        if cache_key in self._llm_cache:
+            return self._llm_cache[cache_key]
+
+        llm = ChatGoogleGenerativeAI(
+            model=model_name,
             google_api_key=self.api_key,
-            temperature=generation_kwargs.get("temperature", settings.temperature),
-            top_p=generation_kwargs.get("top_p", settings.top_p),
-            top_k=generation_kwargs.get("top_k", settings.top_k),
-            max_output_tokens=generation_kwargs.get(
-                "max_output_tokens", settings.max_tokens
-            ),
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            max_output_tokens=max_output_tokens,
             safety_settings=_SAFETY_SETTINGS,
             timeout=settings.gemini_timeout,
             max_retries=settings.gemini_max_retries,
         )
+
+        self._llm_cache[cache_key] = llm
+
+        return llm
 
     @staticmethod
     def _build_messages(

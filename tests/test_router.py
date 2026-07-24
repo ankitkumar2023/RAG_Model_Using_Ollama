@@ -32,6 +32,29 @@ async def test_weather_query_routes_without_llm_call() -> None:
 
 
 @pytest.mark.asyncio
+async def test_weather_query_with_placeholder_location_leaves_params_empty() -> None:
+    """
+    Regression test: "weather in my location? I live in Bokaro Steel
+    City..." was extracting the literal phrase "my location" as the
+    place name and sending that straight to the weather API (404).
+    Placeholder phrases must resolve to no params, so
+    _gather_weather_context's LLM-based fallback (which can read the
+    rest of the sentence) runs instead.
+    """
+
+    router, _ = _make_router()
+
+    decision = await router.classify(
+        "what is the current weather in my location ? i lives in "
+        "bokaro steel city ,jharkhand ,india.",
+        has_indexed_documents=False,
+    )
+
+    assert decision.route == RouteType.WEATHER
+    assert decision.params == {}
+
+
+@pytest.mark.asyncio
 async def test_finance_query_routes_without_llm_call() -> None:
     router, gemini_client = _make_router()
 

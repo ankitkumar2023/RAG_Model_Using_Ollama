@@ -366,33 +366,53 @@ def render_copy_button(text: str, key: str) -> None:
     Client-side clipboard copy -- no server round-trip. Tries the modern
     Clipboard API first, falls back to the older execCommand approach
     (more likely to work inside Streamlit's sandboxed component iframe).
+
+    The text is embedded inside a <script> block, not an inline
+    `onclick="..."` HTML attribute -- `onclick` is itself double-quote
+    delimited, and json.dumps() produces a double-quoted string, so
+    embedding it there terminates the attribute at the first embedded
+    quote and leaks the rest of the JS onto the page as literal text.
+    A <script> block has no such attribute-quoting concern.
     """
 
-    safe_text = json.dumps(text)
+    # Defensive: a literal "</script" inside the text would otherwise
+    # terminate the script block early.
+    safe_text = json.dumps(text).replace("</script", "<\\/script")
 
     components.html(
         f"""
         <div style="font-family:Inter,sans-serif;">
-        <button id="copy-{key}" onclick="
-            const text = {safe_text};
-            function fallbackCopy() {{
-                const ta = document.createElement('textarea');
-                ta.value = text; document.body.appendChild(ta);
-                ta.select(); document.execCommand('copy');
-                document.body.removeChild(ta);
-            }}
-            if (navigator.clipboard && navigator.clipboard.writeText) {{
-                navigator.clipboard.writeText(text).catch(fallbackCopy);
-            }} else {{ fallbackCopy(); }}
-            const btn = document.getElementById('copy-{key}');
-            btn.innerText = '✓ Copied';
-            setTimeout(() => {{ btn.innerText = '📋 Copy'; }}, 1500);
-        " style="
+        <button id="copy-{key}" style="
             background:{COLORS['surface_elevated']}; color:{COLORS['text_secondary']};
             border:1px solid {COLORS['border_strong']}; border-radius:8px;
             padding:4px 12px; font-size:12px; cursor:pointer;
         ">📋 Copy</button>
         </div>
+        <script>
+        (function() {{
+            const text = {safe_text};
+            const btn = document.getElementById('copy-{key}');
+
+            function fallbackCopy() {{
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }}
+
+            btn.addEventListener('click', function() {{
+                if (navigator.clipboard && navigator.clipboard.writeText) {{
+                    navigator.clipboard.writeText(text).catch(fallbackCopy);
+                }} else {{
+                    fallbackCopy();
+                }}
+                btn.innerText = '✓ Copied';
+                setTimeout(function() {{ btn.innerText = '📋 Copy'; }}, 1500);
+            }});
+        }})();
+        </script>
         """,
         height=38,
     )

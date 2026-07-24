@@ -50,6 +50,12 @@ _WEATHER_LOCATION_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+_PLACEHOLDER_LOCATION_PATTERN = re.compile(
+    r"^(my|our|this|that)\s+(location|area|city|place|region|"
+    r"current\s+location)$|^(here|there)$",
+    re.IGNORECASE,
+)
+
 _FINANCE_PATTERN = re.compile(
     r"\b(stock price|share price|ticker|market cap|nasdaq|nyse|"
     r"stock quote)\b",
@@ -133,6 +139,16 @@ class QueryRouter:
             location = (
                 location_match.group(1).strip() if location_match else ""
             )
+
+            if _PLACEHOLDER_LOCATION_PATTERN.match(location):
+                # The regex grabbed a placeholder phrase ("my location",
+                # "here", ...) rather than an actual place name -- e.g.
+                # "weather in my location? I live in Bokaro Steel City"
+                # would otherwise be sent to the weather API literally
+                # as "my location" and 404. Treat as unresolved so
+                # _gather_weather_context's LLM-based extraction (which
+                # can read the rest of the sentence) runs instead.
+                location = ""
 
             return RouteDecision(
                 route=RouteType.WEATHER,

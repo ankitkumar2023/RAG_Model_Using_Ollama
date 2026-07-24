@@ -6,36 +6,37 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class ModelConfig:
     """
-    Configuration metadata for local models.
+    Configuration metadata for a Gemini model.
     """
 
     name: str
     context_window: int
-    supports_tools: bool
     supports_streaming: bool
     temperature: float
 
 
 PRIMARY_MODEL_CONFIG = ModelConfig(
-    name="qwen2.5:7b",
-    context_window=32768,
-    supports_tools=True,
+    name="gemini-flash-latest",
+    context_window=1_048_576,
     supports_streaming=True,
     temperature=0.2,
 )
 
-GUARD_MODEL_CONFIG = ModelConfig(
-    name="llama-guard3:8b",
-    context_window=8192,
-    supports_tools=False,
+PRO_MODEL_CONFIG = ModelConfig(
+    name="gemini-pro-latest",
+    context_window=1_048_576,
+    supports_streaming=True,
+    temperature=0.2,
+)
+
+EMBEDDING_MODEL_CONFIG = ModelConfig(
+    name="models/gemini-embedding-001",
+    context_window=2048,
     supports_streaming=False,
     temperature=0.0,
 )
 
-EMBEDDING_MODEL_CONFIG = ModelConfig(
-    name="nomic-embed-text",
-    context_window=8192,
-    supports_tools=False,
-    supports_streaming=False,
-    temperature=0.0,
-)
+AVAILABLE_MODELS: dict[str, ModelConfig] = {
+    "gemini-flash-latest": PRIMARY_MODEL_CONFIG,
+    "gemini-pro-latest": PRO_MODEL_CONFIG,
+}

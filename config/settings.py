@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,19 +36,25 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO")
 
     # =====================================================
-    # OLLAMA
+    # GEMINI (Google Gen AI)
     # =====================================================
 
-    ollama_base_url: str = Field(default="http://localhost:11434")
-    ollama_timeout: int = Field(default=300)
+    gemini_api_key: SecretStr | None = Field(default=None)
+    gemini_timeout: int = Field(default=120)
+    gemini_max_retries: int = Field(default=3)
 
     # =====================================================
     # MODELS
     # =====================================================
 
-    primary_model: str = Field(default="qwen2.5:7b")
-    guard_model: str = Field(default="llama-guard3:8b")
-    embedding_model: str = Field(default="nomic-embed-text")
+    # "-latest" aliases are used instead of pinned versions (e.g.
+    # "gemini-2.5-flash") because Google periodically retires older
+    # pinned models for new API keys/projects; the alias always resolves
+    # to Google's current recommended model in that tier. Override in
+    # .env with a specific pinned version if your key needs one.
+    primary_model: str = Field(default="gemini-flash-latest")
+    pro_model: str = Field(default="gemini-pro-latest")
+    embedding_model: str = Field(default="models/gemini-embedding-001")
 
     # =====================================================
     # VECTOR STORE
@@ -64,7 +70,51 @@ class Settings(BaseSettings):
     chunk_size: int = Field(default=800)
     chunk_overlap: int = Field(default=120)
     top_k_results: int = Field(default=5)
-    similarity_threshold: float = Field(default=0.65)
+
+    # Cosine similarity in [0, 1] between the query and a chunk, computed
+    # directly against the stored embeddings (see VectorStore, which
+    # configures the collection for cosine distance). Chunks scoring below
+    # this are dropped before reaching the LLM.
+    retrieval_score_threshold: float = Field(default=0.0)
+
+    # =====================================================
+    # RETRIEVAL STRATEGY TOGGLES
+    # =====================================================
+
+    enable_multi_query: bool = Field(default=True)
+    enable_mmr: bool = Field(default=True)
+    mmr_lambda: float = Field(default=0.5)
+
+    # Gemini-based reranking (an extra lightweight LLM call that judges
+    # candidate chunks against the original question) rather than a
+    # cross-encoder model, to avoid pulling a torch/sentence-transformers
+    # dependency into every deployment target.
+    enable_reranking: bool = Field(default=True)
+    rerank_candidate_multiplier: int = Field(default=3)
+
+    # How many recent chat turns (user+assistant messages) are used to
+    # condense a follow-up question into a standalone one before
+    # retrieval. Kept small on purpose so stale conversation topics don't
+    # leak into unrelated retrieval queries.
+    condense_history_turns: int = Field(default=6)
+
+    # =====================================================
+    # QUERY ROUTING
+    # =====================================================
+
+    enable_query_router: bool = Field(default=True)
+
+    # Below this RAG confidence score, the router automatically falls
+    # back to a web-search route instead of answering "not found"
+    # ("corrective RAG").
+    corrective_rag_threshold: float = Field(default=0.4)
+
+    # =====================================================
+    # AGENT / TOOL LOOP
+    # =====================================================
+
+    enable_tool_loop: bool = Field(default=True)
+    max_tool_iterations: int = Field(default=3)
 
     # =====================================================
     # GENERATION
@@ -74,7 +124,6 @@ class Settings(BaseSettings):
     top_p: float = Field(default=0.9)
     top_k: int = Field(default=40)
     max_tokens: int = Field(default=2048)
-    repeat_penalty: float = Field(default=1.1)
 
     # =====================================================
     # STREAMING
@@ -104,6 +153,17 @@ class Settings(BaseSettings):
     openweather_api_key: str | None = None
     alpha_vantage_api_key: str | None = None
     serpapi_api_key: str | None = None
+
+    # =====================================================
+    # SECURITY
+    # =====================================================
+
+    max_upload_size_mb: int = Field(default=25)
+    allowed_upload_extensions: tuple[str, ...] = Field(
+        default=(".pdf", ".docx", ".txt", ".md")
+    )
+    rate_limit_requests: int = Field(default=20)
+    rate_limit_window_seconds: int = Field(default=60)
 
     @property
     def is_production(self) -> bool:

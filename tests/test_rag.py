@@ -1,16 +1,23 @@
 from __future__ import annotations
 
-import pytest
+from unittest.mock import AsyncMock, MagicMock
 
-from src.llm.ollama_client import (
-    OllamaClient,
-)
-from src.rag.chunking import (
-    TextChunker,
-)
-from src.rag.embeddings import (
-    EmbeddingGenerator,
-)
+import pytest
+from pydantic import SecretStr
+
+from src.rag.chunking import TextChunker
+from src.rag.embeddings import EmbeddingGenerator
+
+
+@pytest.fixture(autouse=True)
+def _dummy_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    from src.rag import embeddings as embeddings_module
+
+    monkeypatch.setattr(
+        embeddings_module.settings,
+        "gemini_api_key",
+        SecretStr("dummy-test-key"),
+    )
 
 
 def test_chunking() -> None:
@@ -32,24 +39,32 @@ def test_chunking() -> None:
 
 
 @pytest.mark.asyncio
-async def test_embeddings() -> None:
-    client = OllamaClient()
+async def test_embed_text() -> None:
+    generator = EmbeddingGenerator()
 
-    embedding_generator = (
-        EmbeddingGenerator(client)
+    # GoogleGenerativeAIEmbeddings is a pydantic model, so individual
+    # methods can't be monkeypatched on the real instance -- swap the
+    # whole attribute for a plain mock instead.
+    generator.embedding_function = MagicMock(
+        aembed_query=AsyncMock(return_value=[0.1, 0.2, 0.3])
     )
 
-    embedding = (
-        await embedding_generator.embed_text(
-            "Hello world"
+    embedding = await generator.embed_text("Hello world")
+
+    assert isinstance(embedding, list)
+    assert len(embedding) > 0
+
+
+@pytest.mark.asyncio
+async def test_embed_batch() -> None:
+    generator = EmbeddingGenerator()
+
+    generator.embedding_function = MagicMock(
+        aembed_documents=AsyncMock(
+            return_value=[[0.1, 0.2], [0.3, 0.4]]
         )
     )
 
-    assert isinstance(
-        embedding,
-        list,
-    )
+    embeddings = await generator.embed_batch(["a", "b"])
 
-    assert len(embedding) > 0
-
-    await client.close()
+    assert len(embeddings) == 2

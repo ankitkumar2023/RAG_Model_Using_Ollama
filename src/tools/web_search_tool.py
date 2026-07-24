@@ -28,9 +28,7 @@ class WebSearchTool:
     Lightweight SERP API integration.
     """
 
-    BASE_URL = (
-        "https://serpapi.com/search.json"
-    )
+    BASE_URL = "https://serpapi.com/search.json"
 
     def __init__(self) -> None:
         self.api_key = settings.serpapi_api_key
@@ -45,9 +43,7 @@ class WebSearchTool:
         """
 
         if not self.api_key:
-            raise WebSearchError(
-                "Missing SERP API key."
-            )
+            raise WebSearchError("Missing SERP API key.")
 
         params = {
             "q": query,
@@ -56,9 +52,7 @@ class WebSearchTool:
             "num": max_results,
         }
 
-        async with httpx.AsyncClient(
-            timeout=30
-        ) as client:
+        async with httpx.AsyncClient(timeout=30) as client:
             try:
                 response = await client.get(
                     self.BASE_URL,
@@ -74,9 +68,7 @@ class WebSearchTool:
                     [],
                 )
 
-                results: list[
-                    WebSearchResult
-                ] = []
+                results: list[WebSearchResult] = []
 
                 for item in organic_results:
                     results.append(
@@ -104,10 +96,6 @@ class WebSearchTool:
                 return results
 
             except Exception as exc:
-                logger.exception(
-                    "Web search failed."
-                )
+                logger.exception("Web search failed.")
 
-                raise WebSearchError(
-                    str(exc)
-                ) from exc
+                raise WebSearchError(str(exc)) from exc

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from config.settings import get_settings
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
-class RouteType(str, Enum):
+class RouteType(StrEnum):
     DOCUMENT_RAG = "document_rag"
     WEB_SEARCH = "web_search"
     WEATHER = "weather"
@@ -105,19 +105,14 @@ class QueryRouter:
         query: str,
         has_indexed_documents: bool,
     ) -> RouteDecision | None:
-        rag_intent = (
-            bool(_RAG_INTENT_PATTERN.search(query)) and has_indexed_documents
-        )
+        rag_intent = bool(_RAG_INTENT_PATTERN.search(query)) and has_indexed_documents
         web_intent = bool(_WEB_SEARCH_PATTERN.search(query))
 
         if rag_intent and web_intent:
             return RouteDecision(
                 route=RouteType.HYBRID,
                 confidence=0.85,
-                reason=(
-                    "Query references both indexed documents and "
-                    "current/recent information."
-                ),
+                reason=("Query references both indexed documents and current/recent information."),
             )
 
         if rag_intent:
@@ -128,17 +123,12 @@ class QueryRouter:
             return RouteDecision(
                 route=RouteType.DOCUMENT_RAG,
                 confidence=0.8,
-                reason=(
-                    "Query explicitly references the user's uploaded "
-                    "documents."
-                ),
+                reason=("Query explicitly references the user's uploaded documents."),
             )
 
         if _WEATHER_PATTERN.search(query):
             location_match = _WEATHER_LOCATION_PATTERN.search(query)
-            location = (
-                location_match.group(1).strip() if location_match else ""
-            )
+            location = location_match.group(1).strip() if location_match else ""
 
             if _PLACEHOLDER_LOCATION_PATTERN.match(location):
                 # The regex grabbed a placeholder phrase ("my location",
@@ -163,19 +153,11 @@ class QueryRouter:
             return RouteDecision(
                 route=RouteType.FINANCE,
                 confidence=0.85 if ticker_match else 0.6,
-                reason=(
-                    "Query asks about a stock price/ticker/market data."
-                ),
-                params=(
-                    {"symbol": ticker_match.group(1)}
-                    if ticker_match
-                    else {}
-                ),
+                reason=("Query asks about a stock price/ticker/market data."),
+                params=({"symbol": ticker_match.group(1)} if ticker_match else {}),
             )
 
-        if _ARITHMETIC_HINT_PATTERN.search(
-            query
-        ) or _CALC_KEYWORD_PATTERN.search(query):
+        if _ARITHMETIC_HINT_PATTERN.search(query) or _CALC_KEYWORD_PATTERN.search(query):
             return RouteDecision(
                 route=RouteType.TOOL_CALLING,
                 confidence=0.8,
@@ -199,10 +181,7 @@ class QueryRouter:
         chat_history: list[ChatMessageSchema] | None,
     ) -> RouteDecision:
         history_text = (
-            "\n".join(
-                f"{message.role}: {message.content}"
-                for message in chat_history[-4:]
-            )
+            "\n".join(f"{message.role}: {message.content}" for message in chat_history[-4:])
             if chat_history
             else "(none)"
         )
@@ -210,10 +189,7 @@ class QueryRouter:
         document_context = (
             "The user has documents indexed in the knowledge base."
             if has_indexed_documents
-            else (
-                "The user has NO documents indexed -- do not select "
-                "document_rag or hybrid."
-            )
+            else ("The user has NO documents indexed -- do not select document_rag or hybrid.")
         )
 
         prompt = ROUTE_CLASSIFICATION_PROMPT.format(
@@ -229,26 +205,15 @@ class QueryRouter:
                 temperature=0.0,
             )
 
-            parsed = ResponseParser.extract_json(
-                result.get("response", "")
-            )
+            parsed = ResponseParser.extract_json(result.get("response", ""))
 
             if not parsed:
-                raise ValueError(
-                    "Router LLM returned no parseable JSON."
-                )
+                raise ValueError("Router LLM returned no parseable JSON.")
 
             route = RouteType(parsed["route"])
 
-            if (
-                route in (RouteType.DOCUMENT_RAG, RouteType.HYBRID)
-                and not has_indexed_documents
-            ):
-                route = (
-                    RouteType.WEB_SEARCH
-                    if route == RouteType.HYBRID
-                    else RouteType.GENERAL
-                )
+            if route in (RouteType.DOCUMENT_RAG, RouteType.HYBRID) and not has_indexed_documents:
+                route = RouteType.WEB_SEARCH if route == RouteType.HYBRID else RouteType.GENERAL
 
             return RouteDecision(
                 route=route,
@@ -258,17 +223,12 @@ class QueryRouter:
             )
 
         except Exception:
-            logger.exception(
-                "LLM route classification failed; defaulting to general."
-            )
+            logger.exception("LLM route classification failed; defaulting to general.")
 
             return RouteDecision(
                 route=RouteType.GENERAL,
                 confidence=0.3,
-                reason=(
-                    "Router classification failed; defaulted to "
-                    "general knowledge."
-                ),
+                reason=("Router classification failed; defaulted to general knowledge."),
             )
 
     async def classify(
@@ -284,23 +244,16 @@ class QueryRouter:
 
         if not settings.enable_query_router:
             return RouteDecision(
-                route=(
-                    RouteType.DOCUMENT_RAG
-                    if has_indexed_documents
-                    else RouteType.GENERAL
-                ),
+                route=(RouteType.DOCUMENT_RAG if has_indexed_documents else RouteType.GENERAL),
                 confidence=1.0,
                 reason="Query routing is disabled.",
             )
 
-        deterministic = self._classify_deterministic(
-            query, has_indexed_documents
-        )
+        deterministic = self._classify_deterministic(query, has_indexed_documents)
 
         if deterministic is not None:
             logger.info(
-                "Router (deterministic): route=%s confidence=%.2f "
-                "query=%s",
+                "Router (deterministic): route=%s confidence=%.2f query=%s",
                 deterministic.route.value,
                 deterministic.confidence,
                 query,
@@ -308,9 +261,7 @@ class QueryRouter:
 
             return deterministic
 
-        decision = await self._classify_with_llm(
-            query, has_indexed_documents, chat_history
-        )
+        decision = await self._classify_with_llm(query, has_indexed_documents, chat_history)
 
         logger.info(
             "Router (LLM): route=%s confidence=%.2f query=%s",

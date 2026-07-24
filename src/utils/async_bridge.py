@@ -36,7 +36,7 @@ def to_sync_iterator(
             try:
                 async for item in async_gen_factory():
                     item_queue.put((True, item))
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 item_queue.put((False, exc))
             finally:
                 item_queue.put(_SENTINEL)

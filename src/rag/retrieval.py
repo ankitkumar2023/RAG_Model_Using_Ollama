@@ -85,9 +85,7 @@ class Retriever:
 
         if settings.enable_mmr:
             search_kwargs["lambda_mult"] = settings.mmr_lambda
-            search_kwargs["fetch_k"] = (
-                top_k * settings.rerank_candidate_multiplier
-            )
+            search_kwargs["fetch_k"] = top_k * settings.rerank_candidate_multiplier
 
         base_retriever = self.vector_store.store.as_retriever(
             search_type=search_type,
@@ -119,28 +117,22 @@ class Retriever:
         recent = chat_history[-settings.condense_history_turns :]
         history_text = "\n".join(f"{m.role}: {m.content}" for m in recent)
 
-        prompt = _CONDENSE_PROMPT.format(
-            history=history_text, question=query
-        )
+        prompt = _CONDENSE_PROMPT.format(history=history_text, question=query)
 
         try:
-            result = await self.gemini_client.agenerate(
-                prompt=prompt, temperature=0.0
-            )
+            result = await self.gemini_client.agenerate(prompt=prompt, temperature=0.0)
 
             condensed = result.get("response", "").strip()
 
             return condensed or query
 
         except Exception:
-            logger.exception(
-                "Query condensing failed; using original query."
-            )
+            logger.exception("Query condensing failed; using original query.")
             return query
 
     @staticmethod
     def _cosine_similarity(a: list[float], b: list[float]) -> float:
-        dot = sum(x * y for x, y in zip(a, b))
+        dot = sum(x * y for x, y in zip(a, b, strict=True))
         norm_a = math.sqrt(sum(x * x for x in a))
         norm_b = math.sqrt(sum(y * y for y in b))
 
@@ -154,22 +146,16 @@ class Retriever:
         query_embedding: list[float],
         documents: list,
     ) -> list[tuple]:
-        ids = [
-            doc.metadata.get("chunk_uid", "") for doc in documents
-        ]
+        ids = [doc.metadata.get("chunk_uid", "") for doc in documents]
 
         embeddings_by_id = await self.vector_store.get_embeddings(ids)
 
         scored = []
 
-        for doc, doc_id in zip(documents, ids):
+        for doc, doc_id in zip(documents, ids, strict=True):
             embedding = embeddings_by_id.get(doc_id)
 
-            score = (
-                self._cosine_similarity(query_embedding, embedding)
-                if embedding is not None
-                else 0.0
-            )
+            score = self._cosine_similarity(query_embedding, embedding) if embedding is not None else 0.0
 
             scored.append((doc, score))
 
@@ -183,17 +169,12 @@ class Retriever:
         if not settings.enable_reranking or not scored_docs:
             return scored_docs
 
-        passages = "\n".join(
-            f"[{i}] {doc.page_content[:500]}"
-            for i, (doc, _) in enumerate(scored_docs)
-        )
+        passages = "\n".join(f"[{i}] {doc.page_content[:500]}" for i, (doc, _) in enumerate(scored_docs))
 
         prompt = _RERANK_PROMPT.format(question=query, passages=passages)
 
         try:
-            result = await self.gemini_client.agenerate(
-                prompt=prompt, temperature=0.0
-            )
+            result = await self.gemini_client.agenerate(prompt=prompt, temperature=0.0)
 
             parsed = ResponseParser.extract_json(result.get("response", ""))
             scores = parsed.get("scores") if parsed else None
@@ -201,15 +182,10 @@ class Retriever:
             if not scores or len(scores) != len(scored_docs):
                 raise ValueError("Rerank score count mismatch.")
 
-            return [
-                (doc, float(new_score))
-                for (doc, _), new_score in zip(scored_docs, scores)
-            ]
+            return [(doc, float(new_score)) for (doc, _), new_score in zip(scored_docs, scores, strict=True)]
 
         except Exception:
-            logger.exception(
-                "Reranking failed; falling back to similarity scores."
-            )
+            logger.exception("Reranking failed; falling back to similarity scores.")
             return scored_docs
 
     async def retrieve(
@@ -237,9 +213,7 @@ class Retriever:
         if not documents:
             return []
 
-        query_embedding = await self.embedding_generator.embed_text(
-            standalone_query
-        )
+        query_embedding = await self.embedding_generator.embed_text(standalone_query)
 
         scored_docs = await self._score_documents(query_embedding, documents)
         scored_docs = await self._rerank(standalone_query, scored_docs)
@@ -263,9 +237,7 @@ class Retriever:
                 )
             )
 
-        logger.info(
-            "Retrieved %s relevant chunks for query.", len(results)
-        )
+        logger.info("Retrieved %s relevant chunks for query.", len(results))
 
         return results
 
@@ -308,9 +280,7 @@ class Retriever:
         if not answer_text or not retrieved_docs:
             return 0.0
 
-        answer_embedding = await self.embedding_generator.embed_text(
-            answer_text
-        )
+        answer_embedding = await self.embedding_generator.embed_text(answer_text)
 
         ids = [doc.metadata.get("chunk_uid", "") for doc in retrieved_docs]
         embeddings_by_id = await self.vector_store.get_embeddings(ids)

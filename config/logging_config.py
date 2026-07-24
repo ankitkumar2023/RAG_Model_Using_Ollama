@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import logging
-import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 from rich.logging import RichHandler
 
 from config.settings import get_settings
-
 
 settings = get_settings()
 
@@ -25,13 +23,7 @@ def setup_logging() -> None:
     log_level = getattr(logging, settings.log_level.upper(), logging.INFO)
 
     formatter = logging.Formatter(
-        fmt=(
-            "%(asctime)s | "
-            "%(levelname)s | "
-            "%(name)s | "
-            "%(filename)s:%(lineno)d | "
-            "%(message)s"
-        ),
+        fmt=("%(asctime)s | %(levelname)s | %(name)s | %(filename)s:%(lineno)d | %(message)s"),
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 

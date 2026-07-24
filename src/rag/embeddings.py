@@ -43,9 +43,7 @@ class EmbeddingGenerator:
         for i in range(0, len(texts), batch_size):
             batch = texts[i : i + batch_size]
 
-            batch_embeddings = await self.embedding_function.aembed_documents(
-                batch
-            )
+            batch_embeddings = await self.embedding_function.aembed_documents(batch)
 
             embeddings.extend(batch_embeddings)
 

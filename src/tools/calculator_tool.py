@@ -5,7 +5,7 @@ import logging
 import math
 import operator
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class SafeEvaluator(ast.NodeVisitor):
     Safe arithmetic evaluator.
     """
 
-    ALLOWED_OPERATORS = {
+    ALLOWED_OPERATORS: ClassVar[dict] = {
         ast.Add: operator.add,
         ast.Sub: operator.sub,
         ast.Mult: operator.mul,
@@ -36,7 +36,7 @@ class SafeEvaluator(ast.NodeVisitor):
         ast.USub: operator.neg,
     }
 
-    ALLOWED_FUNCTIONS = {
+    ALLOWED_FUNCTIONS: ClassVar[dict] = {
         "sqrt": math.sqrt,
         "sin": math.sin,
         "cos": math.cos,
@@ -69,13 +69,9 @@ class SafeEvaluator(ast.NodeVisitor):
         operator_type = type(node.op)
 
         if operator_type not in self.ALLOWED_OPERATORS:
-            raise CalculatorError(
-                f"Unsupported operator: {operator_type}"
-            )
+            raise CalculatorError(f"Unsupported operator: {operator_type}")
 
-        return self.ALLOWED_OPERATORS[
-            operator_type
-        ](left, right)
+        return self.ALLOWED_OPERATORS[operator_type](left, right)
 
     def visit_UnaryOp(
         self,
@@ -86,13 +82,9 @@ class SafeEvaluator(ast.NodeVisitor):
         operator_type = type(node.op)
 
         if operator_type not in self.ALLOWED_OPERATORS:
-            raise CalculatorError(
-                "Unsupported unary operator."
-            )
+            raise CalculatorError("Unsupported unary operator.")
 
-        return self.ALLOWED_OPERATORS[
-            operator_type
-        ](operand)
+        return self.ALLOWED_OPERATORS[operator_type](operand)
 
     def visit_Num(
         self,
@@ -105,9 +97,7 @@ class SafeEvaluator(ast.NodeVisitor):
         node: ast.Constant,
     ) -> Any:
         if not isinstance(node.value, (int, float)):
-            raise CalculatorError(
-                "Invalid constant type."
-            )
+            raise CalculatorError("Invalid constant type.")
 
         return node.value
 
@@ -116,23 +106,16 @@ class SafeEvaluator(ast.NodeVisitor):
         node: ast.Call,
     ) -> Any:
         if not isinstance(node.func, ast.Name):
-            raise CalculatorError(
-                "Invalid function call."
-            )
+            raise CalculatorError("Invalid function call.")
 
         func_name = node.func.id
 
         if func_name not in self.ALLOWED_FUNCTIONS:
-            raise CalculatorError(
-                f"Function '{func_name}' not allowed."
-            )
+            raise CalculatorError(f"Function '{func_name}' not allowed.")
 
         func = self.ALLOWED_FUNCTIONS[func_name]
 
-        args = [
-            self.visit(arg)
-            for arg in node.args
-        ]
+        args = [self.visit(arg) for arg in node.args]
 
         return func(*args)
 
@@ -140,9 +123,7 @@ class SafeEvaluator(ast.NodeVisitor):
         self,
         node: ast.AST,
     ) -> Any:
-        raise CalculatorError(
-            f"Unsupported syntax: {type(node).__name__}"
-        )
+        raise CalculatorError(f"Unsupported syntax: {type(node).__name__}")
 
 
 class CalculatorTool:
@@ -162,9 +143,7 @@ class CalculatorTool:
         """
 
         try:
-            result = self.evaluator.evaluate(
-                expression
-            )
+            result = self.evaluator.evaluate(expression)
 
             logger.info(
                 "Calculator executed: %s",
@@ -178,10 +157,6 @@ class CalculatorTool:
             )
 
         except Exception as exc:
-            logger.exception(
-                "Calculation failed."
-            )
+            logger.exception("Calculation failed.")
 
-            raise CalculatorError(
-                str(exc)
-            ) from exc
+            raise CalculatorError(str(exc)) from exc

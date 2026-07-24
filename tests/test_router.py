@@ -45,8 +45,7 @@ async def test_weather_query_with_placeholder_location_leaves_params_empty() -> 
     router, _ = _make_router()
 
     decision = await router.classify(
-        "what is the current weather in my location ? i lives in "
-        "bokaro steel city ,jharkhand ,india.",
+        "what is the current weather in my location ? i lives in bokaro steel city ,jharkhand ,india.",
         has_indexed_documents=False,
     )
 
@@ -223,9 +222,7 @@ async def test_router_disabled_defaults_to_document_rag_when_docs_exist(
 ) -> None:
     from src.routing import query_router as query_router_module
 
-    monkeypatch.setattr(
-        query_router_module.settings, "enable_query_router", False
-    )
+    monkeypatch.setattr(query_router_module.settings, "enable_query_router", False)
 
     router, gemini_client = _make_router()
 

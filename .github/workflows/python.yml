@@ -1,0 +1,56 @@
+name: Python CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: Lint (ruff check)
+        run: ruff check .
+
+      - name: Format check (ruff format)
+        run: ruff format --check .
+
+      - name: Byte-compile check
+        run: python -m compileall -q main.py config src ui prompts tests data
+
+      - name: Run tests
+        run: pytest tests/ -q
+
+      - name: Smoke test app boot
+        # No real Gemini API key is used or needed -- this only verifies
+        # the app constructs and renders without exceptions.
+        env:
+          GEMINI_API_KEY: ci-placeholder-key
+        run: |
+          python -c "
+          from streamlit.testing.v1 import AppTest
+          at = AppTest.from_file('main.py', default_timeout=60)
+          at.run()
+          assert not at.exception, f'App raised on boot: {at.exception}'
+          print('App booted with zero exceptions.')
+          "

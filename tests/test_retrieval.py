@@ -16,9 +16,7 @@ def _make_retriever() -> tuple[Retriever, MagicMock, MagicMock, MagicMock]:
     vector_store.get_embeddings = AsyncMock(return_value={})
 
     gemini_client = MagicMock()
-    gemini_client.agenerate = AsyncMock(
-        return_value={"response": "standalone question"}
-    )
+    gemini_client.agenerate = AsyncMock(return_value={"response": "standalone question"})
     gemini_client.get_langchain_llm = MagicMock()
 
     retriever = Retriever(
@@ -121,13 +119,9 @@ async def test_condense_query_falls_back_on_error() -> None:
 async def test_score_documents_uses_stored_embeddings() -> None:
     retriever, _, vector_store, _ = _make_retriever()
 
-    vector_store.get_embeddings = AsyncMock(
-        return_value={"chunk-1": [1.0, 0.0, 0.0]}
-    )
+    vector_store.get_embeddings = AsyncMock(return_value={"chunk-1": [1.0, 0.0, 0.0]})
 
-    documents = [
-        Document(page_content="text", metadata={"chunk_uid": "chunk-1"})
-    ]
+    documents = [Document(page_content="text", metadata={"chunk_uid": "chunk-1"})]
 
     scored = await retriever._score_documents([1.0, 0.0, 0.0], documents)
 

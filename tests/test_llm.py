@@ -23,9 +23,7 @@ def _dummy_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_client_requires_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
     from src.llm import gemini_client as gemini_client_module
 
-    monkeypatch.setattr(
-        gemini_client_module.settings, "gemini_api_key", None
-    )
+    monkeypatch.setattr(gemini_client_module.settings, "gemini_api_key", None)
 
     with pytest.raises(GeminiClientError):
         GeminiClient()
@@ -43,9 +41,7 @@ async def test_agenerate_returns_text(monkeypatch: pytest.MonkeyPatch) -> None:
 
     fake_llm = MagicMock()
     fake_llm.model = "gemini-flash-latest"
-    fake_llm.ainvoke = AsyncMock(
-        return_value=MagicMock(text="Hello from Gemini")
-    )
+    fake_llm.ainvoke = AsyncMock(return_value=MagicMock(text="Hello from Gemini"))
 
     monkeypatch.setattr(client, "_get_llm", lambda **kwargs: fake_llm)
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 SYSTEM_PROMPT = """
 You are a highly capable enterprise AI assistant with access to a
 document knowledge base, live web search, and real-time weather and

@@ -30,9 +30,7 @@ class SystemMonitor:
 
     @staticmethod
     def get_cpu_usage() -> float:
-        return psutil.cpu_percent(
-            interval=1
-        )
+        return psutil.cpu_percent(interval=1)
 
     @staticmethod
     def get_memory_usage() -> dict[str, float]:
@@ -60,10 +58,7 @@ class SystemMonitor:
             result = subprocess.run(
                 [
                     "nvidia-smi",
-                    "--query-gpu=name,"
-                    "memory.used,"
-                    "memory.total,"
-                    "utilization.gpu",
+                    ("--query-gpu=name,memory.used,memory.total,utilization.gpu"),
                     "--format=csv,noheader,nounits",
                 ],
                 capture_output=True,
@@ -71,9 +66,7 @@ class SystemMonitor:
                 check=True,
             )
 
-            output = (
-                result.stdout.strip()
-            )
+            output = result.stdout.strip()
 
             if not output:
                 return {}
@@ -82,21 +75,13 @@ class SystemMonitor:
 
             return {
                 "gpu_name": gpu_data[0],
-                "gpu_memory_used_mb": float(
-                    gpu_data[1]
-                ),
-                "gpu_memory_total_mb": float(
-                    gpu_data[2]
-                ),
-                "gpu_utilization_percent": float(
-                    gpu_data[3]
-                ),
+                "gpu_memory_used_mb": float(gpu_data[1]),
+                "gpu_memory_total_mb": float(gpu_data[2]),
+                "gpu_utilization_percent": float(gpu_data[3]),
             }
 
         except Exception:
-            logger.warning(
-                "GPU metrics unavailable."
-            )
+            logger.warning("GPU metrics unavailable.")
 
             return {}
 
@@ -120,20 +105,12 @@ class SystemMonitor:
             ram_used_gb=memory["used_gb"],
             ram_total_gb=memory["total_gb"],
             gpu_name=gpu.get("gpu_name"),
-            gpu_memory_used_mb=gpu.get(
-                "gpu_memory_used_mb"
-            ),
-            gpu_memory_total_mb=gpu.get(
-                "gpu_memory_total_mb"
-            ),
-            gpu_utilization_percent=gpu.get(
-                "gpu_utilization_percent"
-            ),
+            gpu_memory_used_mb=gpu.get("gpu_memory_used_mb"),
+            gpu_memory_total_mb=gpu.get("gpu_memory_total_mb"),
+            gpu_utilization_percent=gpu.get("gpu_utilization_percent"),
         )
 
-        logger.info(
-            "System metrics collected."
-        )
+        logger.info("System metrics collected.")
 
         return metrics
 

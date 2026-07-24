@@ -16,9 +16,7 @@ class Tokenizer:
         self,
         encoding_name: str = "cl100k_base",
     ) -> None:
-        self.encoding = tiktoken.get_encoding(
-            encoding_name
-        )
+        self.encoding = tiktoken.get_encoding(encoding_name)
 
     def encode(self, text: str) -> list[int]:
         return self.encoding.encode(text)

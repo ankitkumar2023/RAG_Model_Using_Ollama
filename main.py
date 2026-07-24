@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import asyncio
@@ -47,9 +46,7 @@ from ui.theme import COLORS, inject_theme, render_aurora_background
 # =========================================================
 
 if sys.platform.startswith("win"):
-    asyncio.set_event_loop_policy(
-        asyncio.WindowsSelectorEventLoopPolicy()
-    )
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # =========================================================
 # INITIALIZATION
@@ -186,14 +183,10 @@ def extract_text_from_pdf(file_path: str) -> list[str]:
                     extracted_text = normalize_text(extracted_text)
 
                     if extracted_text:
-                        page_sections.append(
-                            f"[TEXT CONTENT]\n\n{extracted_text}"
-                        )
+                        page_sections.append(f"[TEXT CONTENT]\n\n{extracted_text}")
 
                 except Exception:
-                    logger.exception(
-                        "Standard extraction failed for page %s", page_idx
-                    )
+                    logger.exception("Standard extraction failed for page %s", page_idx)
 
                 try:
                     tables = page.extract_tables()
@@ -208,33 +201,21 @@ def extract_text_from_pdf(file_path: str) -> list[str]:
                             if not row:
                                 continue
 
-                            cleaned_cells = [
-                                normalize_text(str(cell)) if cell else ""
-                                for cell in row
-                            ]
+                            cleaned_cells = [normalize_text(str(cell)) if cell else "" for cell in row]
 
                             if not any(cleaned_cells):
                                 continue
 
-                            structured_rows.append(
-                                " | ".join(cleaned_cells)
-                            )
+                            structured_rows.append(" | ".join(cleaned_cells))
 
                         if structured_rows:
-                            page_sections.append(
-                                f"[TABLE {table_idx}]\n\n"
-                                f"{chr(10).join(structured_rows)}"
-                            )
+                            page_sections.append(f"[TABLE {table_idx}]\n\n{chr(10).join(structured_rows)}")
 
                 except Exception:
-                    logger.exception(
-                        "Table extraction failed for page %s", page_idx
-                    )
+                    logger.exception("Table extraction failed for page %s", page_idx)
 
                 if page_sections:
-                    page_content = normalize_text(
-                        "\n\n".join(page_sections)
-                    )
+                    page_content = normalize_text("\n\n".join(page_sections))
 
                     if page_content:
                         pages.append(page_content)
@@ -262,11 +243,7 @@ def extract_text_from_docx(file_path: str) -> str:
     try:
         document = Document(file_path)
 
-        text = "\n".join(
-            paragraph.text
-            for paragraph in document.paragraphs
-            if paragraph.text.strip()
-        )
+        text = "\n".join(paragraph.text for paragraph in document.paragraphs if paragraph.text.strip())
 
         text = normalize_text(text)
 
@@ -289,9 +266,7 @@ def extract_uploaded_text(uploaded_file: Any) -> list[str]:
 
     suffix = Path(uploaded_file.name).suffix.lower()
 
-    with tempfile.NamedTemporaryFile(
-        delete=False, suffix=suffix
-    ) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
         temp_file.write(uploaded_file.read())
         temp_path = temp_file.name
 
@@ -302,9 +277,7 @@ def extract_uploaded_text(uploaded_file: Any) -> list[str]:
         if suffix == ".docx":
             return [extract_text_from_docx(temp_path)]
 
-        text = Path(temp_path).read_text(
-            encoding="utf-8", errors="ignore"
-        )
+        text = Path(temp_path).read_text(encoding="utf-8", errors="ignore")
 
         return [normalize_text(text)]
 
@@ -383,8 +356,8 @@ def render_copy_button(text: str, key: str) -> None:
         f"""
         <div style="font-family:Inter,sans-serif;">
         <button id="copy-{key}" style="
-            background:{COLORS['surface_elevated']}; color:{COLORS['text_secondary']};
-            border:1px solid {COLORS['border_strong']}; border-radius:8px;
+            background:{COLORS["surface_elevated"]}; color:{COLORS["text_secondary"]};
+            border:1px solid {COLORS["border_strong"]}; border-radius:8px;
             padding:4px 12px; font-size:12px; cursor:pointer;
         ">📋 Copy</button>
         </div>
@@ -456,9 +429,7 @@ def render_assistant_extras(
     sources = meta.get("sources") or []
 
     if sources:
-        with st.expander(
-            f"📚 Sources ({len(sources)})", expanded=False
-        ):
+        with st.expander(f"📚 Sources ({len(sources)})", expanded=False):
             for source in sources:
                 st.html(
                     citation_card(
@@ -486,9 +457,7 @@ def render_assistant_extras(
                 confidence=meta.get("route_confidence", 0.0),
                 tools_used=meta.get("tools_used", []),
                 latency_ms=latency_ms,
-                corrective_fallback=meta.get(
-                    "corrective_fallback", False
-                ),
+                corrective_fallback=meta.get("corrective_fallback", False),
                 reranked=meta.get("reranked", False),
                 retrieved_documents=meta.get("retrieved_documents", 0),
                 web_results_used=meta.get("web_results_used", 0),
@@ -497,14 +466,8 @@ def render_assistant_extras(
 
         if developer_mode:
             response_text = meta.get("response", "")
-            approx_tokens = (
-                tokenizer.count_tokens(response_text)
-                if response_text
-                else 0
-            )
-            gen_latency_s = max(
-                meta.get("generation_latency_ms", 0.0) / 1000, 0.001
-            )
+            approx_tokens = tokenizer.count_tokens(response_text) if response_text else 0
+            gen_latency_s = max(meta.get("generation_latency_ms", 0.0) / 1000, 0.001)
             streaming_speed = approx_tokens / gen_latency_s
 
             st.html(
@@ -513,9 +476,7 @@ def render_assistant_extras(
                     approx_tokens=approx_tokens,
                     streaming_speed=streaming_speed,
                     api_calls=st.session_state.api_call_count,
-                    retrieved_documents=meta.get(
-                        "retrieved_documents", 0
-                    ),
+                    retrieved_documents=meta.get("retrieved_documents", 0),
                     confidence=meta.get("confidence_score", 0.0),
                     model=meta.get("model", settings.primary_model),
                     route=route,
@@ -547,19 +508,11 @@ with st.sidebar:
         st.rerun()
 
     # ---- Recent / Pinned Chats ----
-    st.html(
-        "<div class='nav-section-label'>🕑 Recent &amp; Pinned Chats</div>"
-    )
+    st.html("<div class='nav-section-label'>🕑 Recent &amp; Pinned Chats</div>")
 
-    if st.session_state.messages and st.button(
-        "💾 Save current chat", use_container_width=True
-    ):
+    if st.session_state.messages and st.button("💾 Save current chat", use_container_width=True):
         first_user_msg = next(
-            (
-                m["content"]
-                for m in st.session_state.messages
-                if m["role"] == "user"
-            ),
+            (m["content"] for m in st.session_state.messages if m["role"] == "user"),
             "Untitled chat",
         )
 
@@ -634,15 +587,10 @@ with st.sidebar:
                 if file_hash in st.session_state["uploaded_documents"]:
                     continue
 
-                validation = validate_upload(
-                    uploaded_file.name, file_bytes
-                )
+                validation = validate_upload(uploaded_file.name, file_bytes)
 
                 if not validation.is_valid:
-                    st.error(
-                        f"{uploaded_file.name} rejected: "
-                        f"{validation.reason}"
-                    )
+                    st.error(f"{uploaded_file.name} rejected: {validation.reason}")
                     continue
 
                 index_placeholder = st.empty()
@@ -659,9 +607,7 @@ with st.sidebar:
 
                 index_placeholder.html(loading_pipeline(stages, 2))
 
-                result = run_async(
-                    upload_document_async(uploaded_file.name, pages)
-                )
+                result = run_async(upload_document_async(uploaded_file.name, pages))
 
                 index_placeholder.empty()
 
@@ -671,10 +617,7 @@ with st.sidebar:
                     "timestamp": str(datetime.now(UTC)),
                 }
 
-                st.success(
-                    f"{uploaded_file.name}: "
-                    f"{result['chunks_created']} chunks indexed."
-                )
+                st.success(f"{uploaded_file.name}: {result['chunks_created']} chunks indexed.")
 
             except Exception as exc:
                 logger.exception("Upload failed.")
@@ -696,18 +639,10 @@ with st.sidebar:
     with st.expander("Model & Router Info", expanded=False):
         st.caption(f"Primary model: `{settings.primary_model}`")
         st.caption(f"Embedding model: `{settings.embedding_model}`")
-        st.caption(
-            f"Query router: "
-            f"{'on' if settings.enable_query_router else 'off'}"
-        )
-        st.caption(
-            f"Corrective RAG threshold: "
-            f"{settings.corrective_rag_threshold}"
-        )
+        st.caption(f"Query router: {'on' if settings.enable_query_router else 'off'}")
+        st.caption(f"Corrective RAG threshold: {settings.corrective_rag_threshold}")
 
-    if st.button(
-        "🗑️ Reset Vector Database", use_container_width=True
-    ):
+    if st.button("🗑️ Reset Vector Database", use_container_width=True):
         try:
             run_async(router.vector_store.reset_collection())
             st.session_state.uploaded_documents = {}
@@ -721,16 +656,10 @@ with st.sidebar:
             metrics = SystemMonitor.collect_metrics()
 
             st.caption(f"CPU: {metrics.cpu_percent:.1f}%")
-            st.caption(
-                f"RAM: {metrics.ram_used_gb:.1f}/"
-                f"{metrics.ram_total_gb:.1f} GB"
-            )
+            st.caption(f"RAM: {metrics.ram_used_gb:.1f}/{metrics.ram_total_gb:.1f} GB")
 
             if metrics.gpu_name:
-                st.caption(
-                    f"GPU: {metrics.gpu_utilization_percent:.1f}% "
-                    f"({metrics.gpu_name})"
-                )
+                st.caption(f"GPU: {metrics.gpu_utilization_percent:.1f}% ({metrics.gpu_name})")
 
         except Exception:
             logger.exception("Metrics collection failed.")
@@ -751,10 +680,7 @@ except Exception:
 st.html(
     hero_banner(
         title="AI Workspace",
-        subtitle=(
-            "Document QA · Web Search · Weather · Finance · "
-            "Reasoning -- routed automatically"
-        ),
+        subtitle=("Document QA · Web Search · Weather · Finance · Reasoning -- routed automatically"),
         status_items=[
             (
                 "🟢" if gemini_online else "🔴",
@@ -773,11 +699,7 @@ st.html(
             (
                 "⚡",
                 "Last latency",
-                (
-                    f"{st.session_state.last_latency_ms:.0f}ms"
-                    if st.session_state.last_latency_ms
-                    else "--"
-                ),
+                (f"{st.session_state.last_latency_ms:.0f}ms" if st.session_state.last_latency_ms else "--"),
             ),
             ("🌎", "Env", settings.app_env),
         ],
@@ -791,9 +713,7 @@ for idx, message in enumerate(st.session_state.messages):
         st.markdown(message["content"])
 
         if message["role"] == "assistant" and message.get("route"):
-            render_assistant_extras(
-                message, developer_mode, message_key=f"hist_{idx}"
-            )
+            render_assistant_extras(message, developer_mode, message_key=f"hist_{idx}")
 
 toolbar_cols = st.columns([1, 1, 10])
 
@@ -802,9 +722,7 @@ with toolbar_cols[0]:
         st.toast("Use the Knowledge Base uploader in the sidebar.")
 
 with toolbar_cols[1]:
-    st.button(
-        "🎤", help="Voice input -- coming soon", disabled=True
-    )
+    st.button("🎤", help="Voice input -- coming soon", disabled=True)
 
 prompt = st.chat_input("Ask anything...")
 is_regenerate = False
@@ -818,20 +736,17 @@ if pending_regenerate:
 if prompt and not rate_limiter.allow(st.session_state["session_id"]):
     st.chat_message("user", avatar="🧑").markdown(prompt)
     st.chat_message("assistant", avatar="✨").error(
-        "Rate limit exceeded. Please wait a moment before sending "
-        "another message."
+        "Rate limit exceeded. Please wait a moment before sending another message."
     )
 
 elif prompt:
     if is_regenerate:
         conversation_history = [
-            {"role": m["role"], "content": m["content"]}
-            for m in st.session_state.messages[:-1]
+            {"role": m["role"], "content": m["content"]} for m in st.session_state.messages[:-1]
         ]
     else:
         conversation_history = [
-            {"role": m["role"], "content": m["content"]}
-            for m in st.session_state.messages
+            {"role": m["role"], "content": m["content"]} for m in st.session_state.messages
         ]
 
         st.session_state.messages.append(
@@ -884,13 +799,9 @@ elif prompt:
 
                 gen_start = time.perf_counter()
 
-                full_text = st.write_stream(
-                    to_sync_iterator(lambda: gen)
-                )
+                full_text = st.write_stream(to_sync_iterator(lambda: gen))
 
-                generation_latency_ms = (
-                    time.perf_counter() - gen_start
-                ) * 1000
+                generation_latency_ms = (time.perf_counter() - gen_start) * 1000
 
                 pipeline_placeholder.empty()
 
@@ -907,25 +818,17 @@ elif prompt:
 
             st.session_state.api_call_count += 1
             st.session_state.last_route = final_meta.get("route")
-            st.session_state.last_latency_ms = final_meta.get(
-                "total_latency_ms"
-            )
-            st.session_state.last_confidence = final_meta.get(
-                "confidence_score"
-            )
+            st.session_state.last_latency_ms = final_meta.get("total_latency_ms")
+            st.session_state.last_confidence = final_meta.get("confidence_score")
 
             new_message_key = f"live_{len(st.session_state.messages)}"
 
-            render_assistant_extras(
-                final_meta, developer_mode, message_key=new_message_key
-            )
+            render_assistant_extras(final_meta, developer_mode, message_key=new_message_key)
 
             st.session_state.messages.append(
                 {
                     "role": "assistant",
-                    "content": final_meta.get(
-                        "response", "No response generated."
-                    ),
+                    "content": final_meta.get("response", "No response generated."),
                     "timestamp": str(datetime.now(UTC)),
                     **{
                         k: final_meta.get(k)

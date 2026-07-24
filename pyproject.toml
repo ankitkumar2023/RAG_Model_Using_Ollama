@@ -1,0 +1,30 @@
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["venv", ".venv", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ISC", "RUF"]
+ignore = [
+    # Broad `except Exception:` is used deliberately at tool/API call
+    # boundaries throughout this codebase (network calls, external
+    # tool execution) -- failures are logged via logger.exception()
+    # and handled gracefully rather than crashing the request.
+    "BLE001",
+    # UI button labels intentionally use stylistic emoji (e.g. "➕ New
+    # Chat") -- not ambiguous in that context, just decorative.
+    "RUF001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Single-line HTML/CSS template fragments -- splitting these hurts
+# readability more than the line length hurts it.
+"ui/components.py" = ["E501"]
+"ui/theme.py" = ["E501"]
+# One deliberately single-line prompt template, preserved verbatim
+# since the original migration to avoid altering the exact text sent
+# to the model.
+"src/api/routes.py" = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"

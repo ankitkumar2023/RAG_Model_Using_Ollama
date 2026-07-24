@@ -42,13 +42,9 @@ class ChatRequest(BaseModel):
     # Prior conversation turns, most recent last. Used to condense a
     # follow-up question into a standalone retrieval query -- NOT dumped
     # wholesale into the final answer-generation prompt.
-    history: list[ChatMessageSchema] = Field(
-        default_factory=list
-    )
+    history: list[ChatMessageSchema] = Field(default_factory=list)
 
-    metadata: dict[str, Any] = Field(
-        default_factory=dict
-    )
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class SourceCitation(BaseModel):
@@ -66,6 +62,7 @@ class ChatResponse(BaseModel):
     """
     Assistant response.
     """
+
     retrieved_context: str = ""
 
     response: str
@@ -78,9 +75,7 @@ class ChatResponse(BaseModel):
 
     retrieved_documents: int
 
-    sources: list[SourceCitation] = Field(
-        default_factory=list
-    )
+    sources: list[SourceCitation] = Field(default_factory=list)
 
     # Blend of retrieval relevance and answer-grounding similarity, in
     # [0, 1]. 0.0 when RAG wasn't used or nothing was retrieved.
@@ -105,9 +100,7 @@ class ChatResponse(BaseModel):
     generation_latency_ms: float = 0.0
     total_latency_ms: float = 0.0
 
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow
-    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
 class ToolInvocationRequest(BaseModel):
@@ -148,9 +141,7 @@ class DocumentUploadRequest(BaseModel):
         min_length=1,
     )
 
-    metadata: dict[str, Any] = Field(
-        default_factory=dict
-    )
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class DocumentUploadResponse(BaseModel):
@@ -176,6 +167,4 @@ class HealthResponse(BaseModel):
 
     vector_store_documents: int
 
-    timestamp: datetime = Field(
-        default_factory=datetime.utcnow
-    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow)

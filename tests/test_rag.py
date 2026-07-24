@@ -26,14 +26,9 @@ def test_chunking() -> None:
         overlap=5,
     )
 
-    text = (
-        "This is a long document used "
-        "for chunking tests."
-    )
+    text = "This is a long document used for chunking tests."
 
-    chunks = chunker.split_text(
-        text
-    )
+    chunks = chunker.split_text(text)
 
     assert len(chunks) > 0
 
@@ -45,9 +40,7 @@ async def test_embed_text() -> None:
     # GoogleGenerativeAIEmbeddings is a pydantic model, so individual
     # methods can't be monkeypatched on the real instance -- swap the
     # whole attribute for a plain mock instead.
-    generator.embedding_function = MagicMock(
-        aembed_query=AsyncMock(return_value=[0.1, 0.2, 0.3])
-    )
+    generator.embedding_function = MagicMock(aembed_query=AsyncMock(return_value=[0.1, 0.2, 0.3]))
 
     embedding = await generator.embed_text("Hello world")
 
@@ -60,9 +53,7 @@ async def test_embed_batch() -> None:
     generator = EmbeddingGenerator()
 
     generator.embedding_function = MagicMock(
-        aembed_documents=AsyncMock(
-            return_value=[[0.1, 0.2], [0.3, 0.4]]
-        )
+        aembed_documents=AsyncMock(return_value=[[0.1, 0.2], [0.3, 0.4]])
     )
 
     embeddings = await generator.embed_batch(["a", "b"])

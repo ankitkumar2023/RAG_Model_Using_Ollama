@@ -29,14 +29,10 @@ class StockTool:
     AlphaVantage stock lookup tool.
     """
 
-    BASE_URL = (
-        "https://www.alphavantage.co/query"
-    )
+    BASE_URL = "https://www.alphavantage.co/query"
 
     def __init__(self) -> None:
-        self.api_key = (
-            settings.alpha_vantage_api_key
-        )
+        self.api_key = settings.alpha_vantage_api_key
 
     async def execute(
         self,
@@ -47,9 +43,7 @@ class StockTool:
         """
 
         if not self.api_key:
-            raise StockToolError(
-                "Missing AlphaVantage API key."
-            )
+            raise StockToolError("Missing AlphaVantage API key.")
 
         params = {
             "function": "GLOBAL_QUOTE",
@@ -57,9 +51,7 @@ class StockTool:
             "apikey": self.api_key,
         }
 
-        async with httpx.AsyncClient(
-            timeout=20
-        ) as client:
+        async with httpx.AsyncClient(timeout=20) as client:
             try:
                 response = await client.get(
                     self.BASE_URL,
@@ -76,18 +68,12 @@ class StockTool:
                 )
 
                 if not quote:
-                    raise StockToolError(
-                        "Invalid stock symbol."
-                    )
+                    raise StockToolError("Invalid stock symbol.")
 
                 result = StockResult(
                     symbol=quote["01. symbol"],
-                    price=float(
-                        quote["05. price"]
-                    ),
-                    change_percent=quote[
-                        "10. change percent"
-                    ],
+                    price=float(quote["05. price"]),
+                    change_percent=quote["10. change percent"],
                     volume=quote["06. volume"],
                 )
 
@@ -99,10 +85,6 @@ class StockTool:
                 return result
 
             except Exception as exc:
-                logger.exception(
-                    "Stock lookup failed."
-                )
+                logger.exception("Stock lookup failed.")
 
-                raise StockToolError(
-                    str(exc)
-                ) from exc
+                raise StockToolError(str(exc)) from exc

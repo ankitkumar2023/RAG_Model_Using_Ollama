@@ -165,8 +165,7 @@ class VectorStore:
             return operation()
         except NotFoundError:
             logger.warning(
-                "Collection '%s' is missing (likely reset by another "
-                "process); reconnecting and retrying.",
+                "Collection '%s' is missing (likely reset by another process); reconnecting and retrying.",
                 settings.chroma_collection,
             )
 
@@ -223,9 +222,7 @@ class VectorStore:
         Delete vectorized document.
         """
 
-        self._call_with_reconnect(
-            lambda: self.collection.delete(ids=[document_id])
-        )
+        self._call_with_reconnect(lambda: self.collection.delete(ids=[document_id]))
 
     async def reset_collection(self) -> None:
         """
@@ -274,6 +271,5 @@ class VectorStore:
         returned_embeddings = result.get("embeddings", [])
 
         return {
-            doc_id: list(vector)
-            for doc_id, vector in zip(returned_ids, returned_embeddings)
+            doc_id: list(vector) for doc_id, vector in zip(returned_ids, returned_embeddings, strict=True)
         }

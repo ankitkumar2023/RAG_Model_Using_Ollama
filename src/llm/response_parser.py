@@ -51,9 +51,7 @@ class ResponseParser:
                 tool_calls.append(parsed)
 
             except json.JSONDecodeError:
-                logger.warning(
-                    "Invalid tool call JSON detected."
-                )
+                logger.warning("Invalid tool call JSON detected.")
 
         return tool_calls
 

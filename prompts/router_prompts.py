@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 ROUTE_CLASSIFICATION_PROMPT = """
 You are a query routing system for an AI assistant. Classify the user's
 query into exactly one route.
@@ -27,7 +26,12 @@ User Query:
 {query}
 
 Respond with ONLY a JSON object, no other text, in this exact shape:
-{{"route": "<one of the routes above>", "confidence": <0.0-1.0>, "reason": "<one short sentence>", "params": {{}}}}
+{{
+  "route": "<one of the routes above>",
+  "confidence": <0.0-1.0>,
+  "reason": "<one short sentence>",
+  "params": {{}}
+}}
 
 For "weather", set params to {{"location": "<city name>"}}.
 For "finance", set params to {{"symbol": "<ticker symbol>"}}.

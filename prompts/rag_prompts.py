@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 RAG_QUERY_REWRITE_PROMPT = """
 Rewrite the user query into an optimized semantic retrieval query.
 

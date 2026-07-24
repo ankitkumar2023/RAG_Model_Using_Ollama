@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import asyncio
@@ -6,7 +5,7 @@ import logging
 import time
 import uuid
 from collections.abc import AsyncIterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from config.settings import get_settings
 from prompts.router_prompts import TOOL_LOOP_SYSTEM_PROMPT
@@ -101,9 +100,7 @@ class APIRouter:
 
         gemini_ok = self.client.health_check()
 
-        vector_count = (
-            await self.vector_store.count()
-        )
+        vector_count = await self.vector_store.count()
 
         return HealthResponse(
             status="healthy",
@@ -151,20 +148,13 @@ class APIRouter:
                 document_id=document_id,
             )
 
-        texts = [
-            chunk.text
-            for chunk in chunks
-        ]
+        texts = [chunk.text for chunk in chunks]
 
-        embeddings = (
-            await self.embedding_generator.embed_batch(
-                texts
-            )
-        )
+        embeddings = await self.embedding_generator.embed_batch(texts)
 
         ids = [
             f"{document_id}_p{page_number}_{chunk.chunk_id}"
-            for page_number, chunk in zip(page_numbers, chunks)
+            for page_number, chunk in zip(page_numbers, chunks, strict=True)
         ]
 
         metadatas = [
@@ -175,9 +165,7 @@ class APIRouter:
                 "chunk_uid": chunk_uid,
                 "page": page_number,
             }
-            for page_number, chunk, chunk_uid in zip(
-                page_numbers, chunks, ids
-            )
+            for page_number, chunk, chunk_uid in zip(page_numbers, chunks, ids, strict=True)
         ]
 
         await self.vector_store.add_documents(
@@ -187,9 +175,7 @@ class APIRouter:
             ids=ids,
         )
 
-        logger.info(
-            "Document uploaded successfully."
-        )
+        logger.info("Document uploaded successfully.")
 
         return DocumentUploadResponse(
             success=True,
@@ -214,22 +200,14 @@ class APIRouter:
             "web_search": self.web_search_tool,
         }
 
-        tool = tool_map.get(
-            request.tool_name
-        )
+        tool = tool_map.get(request.tool_name)
 
         if not tool:
-            raise ValueError(
-                f"Unknown tool: {request.tool_name}"
-            )
+            raise ValueError(f"Unknown tool: {request.tool_name}")
 
-        result = await tool.execute(
-            **request.parameters
-        )
+        result = await tool.execute(**request.parameters)
 
-        execution_time = (
-            time.perf_counter() - start
-        )
+        execution_time = time.perf_counter() - start
 
         return ToolInvocationResponse(
             tool_name=request.tool_name,
@@ -312,8 +290,7 @@ class APIRouter:
             return "", 0, latency_ms
 
         blocks = [
-            f"[Web Result {idx}]\nTitle: {result.title}\n"
-            f"Source: {result.link}\n\n{result.snippet}"
+            f"[Web Result {idx}]\nTitle: {result.title}\nSource: {result.link}\n\n{result.snippet}"
             for idx, result in enumerate(results, start=1)
         ]
 
@@ -326,9 +303,7 @@ class APIRouter:
     ) -> tuple[str, float]:
         start = time.perf_counter()
 
-        location = params.get("location") or await self._extract_param(
-            query, "city or location name"
-        )
+        location = params.get("location") or await self._extract_param(query, "city or location name")
 
         if not location:
             return "", (time.perf_counter() - start) * 1000
@@ -357,9 +332,7 @@ class APIRouter:
     ) -> tuple[str, float]:
         start = time.perf_counter()
 
-        symbol = params.get("symbol") or await self._extract_param(
-            query, "stock ticker symbol"
-        )
+        symbol = params.get("symbol") or await self._extract_param(query, "stock ticker symbol")
 
         if not symbol:
             return "", (time.perf_counter() - start) * 1000
@@ -423,9 +396,7 @@ class APIRouter:
 
             if tool_name == "calculator":
                 try:
-                    result = await self.calculator_tool.execute(
-                        tool_input.get("expression", "")
-                    )
+                    result = await self.calculator_tool.execute(tool_input.get("expression", ""))
                     tool_result_text = f"Result: {result.result}"
 
                 except CalculatorError as exc:
@@ -445,8 +416,7 @@ class APIRouter:
             )
 
         return (
-            "I wasn't able to complete this request within the allowed "
-            "number of steps.",
+            ("I wasn't able to complete this request within the allowed number of steps."),
             tools_used,
             (time.perf_counter() - start) * 1000,
         )
@@ -479,11 +449,7 @@ class APIRouter:
                 f"above. Do not mention 'context' or 'documents'."
             )
 
-        return (
-            f"{SYSTEM_PROMPT}\n\n"
-            f"User question: {query}\n\n"
-            f"Answer using your own knowledge."
-        )
+        return f"{SYSTEM_PROMPT}\n\nUser question: {query}\n\nAnswer using your own knowledge."
 
     async def _route_and_gather(
         self,
@@ -531,9 +497,7 @@ class APIRouter:
         )
 
         if route == RouteType.TOOL_CALLING:
-            answer, tools_used, tool_latency_ms = await self._run_tool_loop(
-                request.query
-            )
+            answer, tools_used, tool_latency_ms = await self._run_tool_loop(request.query)
 
             return _GatherResult(
                 route=route,
@@ -556,28 +520,24 @@ class APIRouter:
         web_results_used = 0
 
         if route == RouteType.DOCUMENT_RAG:
-            context, retrieved_documents, retrieval_latency_ms = (
-                await self._gather_document_rag_context(request)
+            context, retrieved_documents, retrieval_latency_ms = await self._gather_document_rag_context(
+                request
             )
 
             retrieval_confidence = (
-                sum(doc.score for doc in retrieved_documents)
-                / len(retrieved_documents)
+                sum(doc.score for doc in retrieved_documents) / len(retrieved_documents)
                 if retrieved_documents
                 else 0.0
             )
 
             if retrieval_confidence < settings.corrective_rag_threshold:
                 logger.info(
-                    "Retrieval confidence %.2f below corrective threshold "
-                    "%.2f; falling back to web search.",
+                    "Retrieval confidence %.2f below corrective threshold %.2f; falling back to web search.",
                     retrieval_confidence,
                     settings.corrective_rag_threshold,
                 )
 
-                web_context, web_results_used, web_latency_ms = (
-                    await self._gather_web_context(request.query)
-                )
+                web_context, web_results_used, web_latency_ms = await self._gather_web_context(request.query)
 
                 retrieval_latency_ms += web_latency_ms
                 corrective_fallback = True
@@ -588,9 +548,7 @@ class APIRouter:
                     f"added."
                 )
 
-                context = "\n\n".join(
-                    part for part in (context, web_context) if part
-                )
+                context = "\n\n".join(part for part in (context, web_context) if part)
 
         elif route == RouteType.HYBRID:
             (rag_result, web_result) = await asyncio.gather(
@@ -598,34 +556,20 @@ class APIRouter:
                 self._gather_web_context(request.query),
             )
 
-            rag_context, retrieved_documents, retrieval_latency_ms = (
-                rag_result
-            )
+            rag_context, retrieved_documents, retrieval_latency_ms = rag_result
             web_context, web_results_used, web_latency_ms = web_result
 
             retrieval_latency_ms += web_latency_ms
-            context = "\n\n".join(
-                part for part in (rag_context, web_context) if part
-            )
+            context = "\n\n".join(part for part in (rag_context, web_context) if part)
 
         elif route == RouteType.WEB_SEARCH:
-            context, web_results_used, retrieval_latency_ms = (
-                await self._gather_web_context(request.query)
-            )
+            context, web_results_used, retrieval_latency_ms = await self._gather_web_context(request.query)
 
         elif route == RouteType.WEATHER:
-            context, retrieval_latency_ms = (
-                await self._gather_weather_context(
-                    request.query, decision.params
-                )
-            )
+            context, retrieval_latency_ms = await self._gather_weather_context(request.query, decision.params)
 
         elif route == RouteType.FINANCE:
-            context, retrieval_latency_ms = (
-                await self._gather_finance_context(
-                    request.query, decision.params
-                )
-            )
+            context, retrieval_latency_ms = await self._gather_finance_context(request.query, decision.params)
 
         # RouteType.GENERAL: no context needed.
 
@@ -689,12 +633,8 @@ class APIRouter:
                 total_start=total_start,
             )
 
-        prompt_route = (
-            RouteType.HYBRID if gather.corrective_fallback else gather.route
-        )
-        final_prompt = self._build_prompt(
-            prompt_route, request.query, gather.context
-        )
+        prompt_route = RouteType.HYBRID if gather.corrective_fallback else gather.route
+        final_prompt = self._build_prompt(prompt_route, request.query, gather.context)
 
         generation_start = time.perf_counter()
 
@@ -710,9 +650,7 @@ class APIRouter:
             logger.exception("LLM generation failed.")
 
             return ChatResponse(
-                response=(
-                    "Generation failed due to internal system error."
-                ),
+                response=("Generation failed due to internal system error."),
                 model=settings.primary_model,
                 guardrail_passed=False,
                 tools_used=gather.tools_used,
@@ -723,20 +661,14 @@ class APIRouter:
                 route_confidence=gather.route_confidence,
             )
 
-        generation_latency_ms = (
-            time.perf_counter() - generation_start
-        ) * 1000
+        generation_latency_ms = (time.perf_counter() - generation_start) * 1000
 
         cleaned_response = ResponseParser.clean_response(raw_response)
 
         if not cleaned_response:
-            logger.warning(
-                "Model returned empty output; treating as safety-blocked."
-            )
+            logger.warning("Model returned empty output; treating as safety-blocked.")
 
-            cleaned_response = (
-                "Response blocked by output safety guardrails."
-            )
+            cleaned_response = "Response blocked by output safety guardrails."
 
         return await self._finalize_response(
             cleaned_response=cleaned_response,
@@ -817,17 +749,11 @@ class APIRouter:
 
             return None, None, total_start, immediate
 
-        prompt_route = (
-            RouteType.HYBRID if gather.corrective_fallback else gather.route
-        )
-        final_prompt = self._build_prompt(
-            prompt_route, request.query, gather.context
-        )
+        prompt_route = RouteType.HYBRID if gather.corrective_fallback else gather.route
+        final_prompt = self._build_prompt(prompt_route, request.query, gather.context)
 
         async def _generator() -> AsyncIterator[str]:
-            async for chunk in self.client.astream(
-                final_prompt, model=settings.primary_model
-            ):
+            async for chunk in self.client.astream(final_prompt, model=settings.primary_model):
                 yield chunk
 
         return _generator(), gather, total_start, None
@@ -848,9 +774,7 @@ class APIRouter:
         cleaned_response = ResponseParser.clean_response(accumulated_text)
 
         if not cleaned_response:
-            cleaned_response = (
-                "Response blocked by output safety guardrails."
-            )
+            cleaned_response = "Response blocked by output safety guardrails."
 
         return await self._finalize_response(
             cleaned_response=cleaned_response,
@@ -904,15 +828,11 @@ class APIRouter:
 
         if retrieved_documents:
             try:
-                retrieval_component = sum(
-                    doc.score for doc in retrieved_documents
-                ) / len(retrieved_documents)
+                retrieval_component = sum(doc.score for doc in retrieved_documents) / len(retrieved_documents)
 
-                grounding_component = (
-                    await self.retriever.compute_grounding_score(
-                        cleaned_response,
-                        retrieved_documents,
-                    )
+                grounding_component = await self.retriever.compute_grounding_score(
+                    cleaned_response,
+                    retrieved_documents,
                 )
 
                 confidence_score = round(
@@ -921,15 +841,12 @@ class APIRouter:
                 )
 
             except Exception:
-                logger.exception(
-                    "Confidence scoring failed; defaulting to 0.0."
-                )
+                logger.exception("Confidence scoring failed; defaulting to 0.0.")
 
         total_latency_ms = (time.perf_counter() - total_start) * 1000
 
         logger.info(
-            "Chat orchestration completed. route=%s confidence=%.3f "
-            "sources=%s total_latency_ms=%.0f",
+            "Chat orchestration completed. route=%s confidence=%.3f sources=%s total_latency_ms=%.0f",
             route.value,
             confidence_score,
             len(sources),
@@ -950,9 +867,7 @@ class APIRouter:
             route_confidence=route_confidence,
             corrective_fallback=corrective_fallback,
             web_results_used=web_results_used,
-            reranked=(
-                settings.enable_reranking and bool(retrieved_documents)
-            ),
+            reranked=(settings.enable_reranking and bool(retrieved_documents)),
             router_latency_ms=router_latency_ms,
             retrieval_latency_ms=retrieval_latency_ms,
             generation_latency_ms=generation_latency_ms,

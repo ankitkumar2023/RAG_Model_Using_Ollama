@@ -11,9 +11,7 @@ from src.tools.calculator_tool import (
 async def test_calculator_addition() -> None:
     tool = CalculatorTool()
 
-    result = await tool.execute(
-        "2 + 2"
-    )
+    result = await tool.execute("2 + 2")
 
     assert result.result == 4
 
@@ -22,9 +20,7 @@ async def test_calculator_addition() -> None:
 async def test_calculator_functions() -> None:
     tool = CalculatorTool()
 
-    result = await tool.execute(
-        "sqrt(144)"
-    )
+    result = await tool.execute("sqrt(144)")
 
     assert result.result == 12
 
@@ -33,8 +29,6 @@ async def test_calculator_functions() -> None:
 async def test_calculator_complex() -> None:
     tool = CalculatorTool()
 
-    result = await tool.execute(
-        "(10 * 5) + 20 / 2"
-    )
+    result = await tool.execute("(10 * 5) + 20 / 2")
 
     assert result.result == 60

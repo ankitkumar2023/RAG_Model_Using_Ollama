@@ -5,7 +5,6 @@ from typing import Any
 
 from config.logging_config import setup_logging
 
-
 setup_logging()
 
 
@@ -49,12 +48,7 @@ def log_structured(
     Structured logging helper.
     """
 
-    structured_data = " | ".join(
-        [
-            f"{key}={value}"
-            for key, value in kwargs.items()
-        ]
-    )
+    structured_data = " | ".join([f"{key}={value}" for key, value in kwargs.items()])
 
     logger.log(
         level,

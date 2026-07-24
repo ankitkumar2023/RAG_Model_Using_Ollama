@@ -17,9 +17,7 @@ from src.tools.web_search_tool import (
 async def calculator_demo() -> None:
     tool = CalculatorTool()
 
-    result = await tool.execute(
-        "sqrt(144) + 25 * 2"
-    )
+    result = await tool.execute("sqrt(144) + 25 * 2")
 
     print("\nCalculator Result")
     print(result)
@@ -28,9 +26,7 @@ async def calculator_demo() -> None:
 async def weather_demo() -> None:
     tool = WeatherTool()
 
-    result = await tool.execute(
-        "London"
-    )
+    result = await tool.execute("London")
 
     print("\nWeather Result")
     print(result)
@@ -39,9 +35,7 @@ async def weather_demo() -> None:
 async def stock_demo() -> None:
     tool = StockTool()
 
-    result = await tool.execute(
-        "AAPL"
-    )
+    result = await tool.execute("AAPL")
 
     print("\nStock Result")
     print(result)

@@ -20,13 +20,9 @@ class ConversationMemory:
         self,
         max_history: int | None = None,
     ) -> None:
-        self.max_history = (
-            max_history or settings.max_chat_history
-        )
+        self.max_history = max_history or settings.max_chat_history
 
-        self._messages: deque[Message] = deque(
-            maxlen=self.max_history
-        )
+        self._messages: deque[Message] = deque(maxlen=self.max_history)
 
     def add(self, message: Message) -> None:
         self._messages.append(message)
@@ -46,12 +42,7 @@ class ConversationMemory:
         Convert memory into structured prompt.
         """
 
-        return "\n".join(
-            [
-                f"{m.role.upper()}: {m.content}"
-                for m in self._messages
-            ]
-        )
+        return "\n".join([f"{m.role.upper()}: {m.content}" for m in self._messages])
 
     def size(self) -> int:
         return len(self._messages)

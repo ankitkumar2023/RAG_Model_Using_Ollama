@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Literal
 
-
 RoleType = Literal["system", "user", "assistant", "tool"]
 
 
@@ -55,9 +54,7 @@ class Conversation:
         lines: list[str] = []
 
         for msg in self.messages:
-            lines.append(
-                f"{msg.role.upper()}: {msg.content}"
-            )
+            lines.append(f"{msg.role.upper()}: {msg.content}")
 
         return "\n".join(lines)
 

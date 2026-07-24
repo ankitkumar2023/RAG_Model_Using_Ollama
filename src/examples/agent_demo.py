@@ -1,32 +1,26 @@
+"""
+Minimal example: a single tool call fed back into Gemini for a final
+answer. Requires GEMINI_API_KEY to be set (see .env.example).
+
+Run with: python -m src.examples.agent_demo
+"""
+
 from __future__ import annotations
 
 import asyncio
 
-from prompts.system_prompts import (
-    SYSTEM_PROMPT,
-)
-from src.llm.ollama_client import (
-    OllamaClient,
-)
-from src.tools.calculator_tool import (
-    CalculatorTool,
-)
+from prompts.system_prompts import SYSTEM_PROMPT
+from src.llm.gemini_client import GeminiClient
+from src.tools.calculator_tool import CalculatorTool
 
 
 async def main() -> None:
-    client = OllamaClient()
-
+    client = GeminiClient()
     calculator = CalculatorTool()
 
-    user_query = (
-        "What is sqrt(225) + 100?"
-    )
+    user_query = "What is sqrt(225) + 100?"
 
-    calc_result = (
-        await calculator.execute(
-            "sqrt(225) + 100"
-        )
-    )
+    calc_result = await calculator.execute("sqrt(225) + 100")
 
     prompt = f"""
 User Query:
@@ -38,18 +32,13 @@ Tool Result:
 Generate final answer.
 """
 
-    response = await client.generate(
+    response = await client.agenerate(
         prompt=prompt,
         system_prompt=SYSTEM_PROMPT,
     )
 
     print("\nAgent Response:\n")
-
-    print(
-        response.get("response", "")
-    )
-
-    await client.close()
+    print(response.get("response", ""))
 
 
 if __name__ == "__main__":

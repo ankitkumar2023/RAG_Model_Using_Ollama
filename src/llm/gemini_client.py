@@ -73,9 +73,7 @@ class GeminiClient:
         temperature = generation_kwargs.get("temperature", settings.temperature)
         top_p = generation_kwargs.get("top_p", settings.top_p)
         top_k = generation_kwargs.get("top_k", settings.top_k)
-        max_output_tokens = generation_kwargs.get(
-            "max_output_tokens", settings.max_tokens
-        )
+        max_output_tokens = generation_kwargs.get("max_output_tokens", settings.max_tokens)
 
         cache_key = (model_name, temperature, top_p, top_k, max_output_tokens)
 

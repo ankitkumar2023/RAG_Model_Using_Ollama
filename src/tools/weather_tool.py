@@ -30,14 +30,10 @@ class WeatherTool:
     OpenWeatherMap integration.
     """
 
-    BASE_URL = (
-        "https://api.openweathermap.org/data/2.5/weather"
-    )
+    BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
     def __init__(self) -> None:
-        self.api_key = (
-            settings.openweather_api_key
-        )
+        self.api_key = settings.openweather_api_key
 
     async def execute(
         self,
@@ -48,9 +44,7 @@ class WeatherTool:
         """
 
         if not self.api_key:
-            raise WeatherToolError(
-                "Missing OpenWeather API key."
-            )
+            raise WeatherToolError("Missing OpenWeather API key.")
 
         params = {
             "q": location,
@@ -58,9 +52,7 @@ class WeatherTool:
             "units": "metric",
         }
 
-        async with httpx.AsyncClient(
-            timeout=20
-        ) as client:
+        async with httpx.AsyncClient(timeout=20) as client:
             try:
                 response = await client.get(
                     self.BASE_URL,
@@ -73,18 +65,10 @@ class WeatherTool:
 
                 result = WeatherResult(
                     location=data["name"],
-                    temperature_celsius=data["main"][
-                        "temp"
-                    ],
-                    humidity=data["main"][
-                        "humidity"
-                    ],
-                    wind_speed=data["wind"][
-                        "speed"
-                    ],
-                    description=data["weather"][0][
-                        "description"
-                    ],
+                    temperature_celsius=data["main"]["temp"],
+                    humidity=data["main"]["humidity"],
+                    wind_speed=data["wind"]["speed"],
+                    description=data["weather"][0]["description"],
                 )
 
                 logger.info(
@@ -95,10 +79,6 @@ class WeatherTool:
                 return result
 
             except Exception as exc:
-                logger.exception(
-                    "Weather lookup failed."
-                )
+                logger.exception("Weather lookup failed.")
 
-                raise WeatherToolError(
-                    str(exc)
-                ) from exc
+                raise WeatherToolError(str(exc)) from exc

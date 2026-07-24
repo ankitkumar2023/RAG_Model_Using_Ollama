@@ -28,9 +28,7 @@ def _flatten(html: str) -> str:
     between tags, so this is always safe.
     """
 
-    return "\n".join(
-        line.strip() for line in html.strip().splitlines() if line.strip()
-    )
+    return "\n".join(line.strip() for line in html.strip().splitlines() if line.strip())
 
 
 def ai_card(
@@ -39,15 +37,11 @@ def ai_card(
     icon: str = "",
     accent: bool = False,
 ) -> str:
-    border = (
-        f"1px solid {COLORS['primary']}"
-        if accent
-        else f"1px solid {COLORS['border']}"
-    )
+    border = f"1px solid {COLORS['primary']}" if accent else f"1px solid {COLORS['border']}"
 
     return _flatten(f"""
     <div style="
-        background: {COLORS['glass']};
+        background: {COLORS["glass"]};
         backdrop-filter: blur(12px);
         border: {border};
         border-radius: 16px;
@@ -58,12 +52,12 @@ def ai_card(
         <div style="
             font-size: 13px;
             font-weight: 600;
-            color: {COLORS['text_secondary']};
+            color: {COLORS["text_secondary"]};
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 8px;
-        ">{icon + ' ' if icon else ''}{title}</div>
-        <div style="color: {COLORS['text_primary']};">{content_html}</div>
+        ">{icon + " " if icon else ""}{title}</div>
+        <div style="color: {COLORS["text_primary"]};">{content_html}</div>
     </div>
     """)
 
@@ -71,8 +65,8 @@ def ai_card(
 def metric_card(label: str, value: str, icon: str = "") -> str:
     return _flatten(f"""
     <div style="
-        background: {COLORS['surface_elevated']};
-        border: 1px solid {COLORS['border']};
+        background: {COLORS["surface_elevated"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 12px;
         padding: 16px;
         text-align: center;
@@ -88,7 +82,7 @@ def metric_card(label: str, value: str, icon: str = "") -> str:
         ">{value}</div>
         <div style="
             font-size: 12px;
-            color: {COLORS['text_secondary']};
+            color: {COLORS["text_secondary"]};
             margin-top: 2px;
         ">{label}</div>
     </div>
@@ -107,10 +101,10 @@ def status_badge(label: str, status: str = "online") -> str:
     return _flatten(f"""
     <span style="
         display: inline-flex; align-items: center; gap: 6px;
-        background: {COLORS['surface_elevated']};
-        border: 1px solid {COLORS['border']};
+        background: {COLORS["surface_elevated"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 999px; padding: 4px 12px;
-        font-size: 12px; color: {COLORS['text_secondary']};
+        font-size: 12px; color: {COLORS["text_secondary"]};
     ">
         <span style="width: 7px; height: 7px; border-radius: 999px; background: {color}; {pulse}"></span>
         {label}
@@ -128,7 +122,7 @@ def tool_badge(route: str) -> str:
         background: rgba(124, 58, 237, 0.12);
         border: 1px solid rgba(124, 58, 237, 0.35);
         border-radius: 999px; padding: 4px 12px;
-        font-size: 12px; font-weight: 500; color: {COLORS['text_primary']};
+        font-size: 12px; font-weight: 500; color: {COLORS["text_primary"]};
     ">{icon} {label}</span>
     """)
 
@@ -148,14 +142,14 @@ def confidence_meter(score: float, label: str = "Confidence") -> str:
     <div style="margin: 6px 0;">
         <div style="
             display: flex; justify-content: space-between;
-            font-size: 12px; color: {COLORS['text_secondary']};
+            font-size: 12px; color: {COLORS["text_secondary"]};
             margin-bottom: 4px;
         ">
             <span>{label}</span><span>{pct}%</span>
         </div>
         <div style="
             width: 100%; height: 6px; border-radius: 999px;
-            background: {COLORS['surface_elevated']}; overflow: hidden;
+            background: {COLORS["surface_elevated"]}; overflow: hidden;
         ">
             <div style="
                 width: {pct}%; height: 100%; border-radius: 999px;
@@ -177,9 +171,9 @@ def citation_card(
 
     return _flatten(f"""
     <div style="
-        background: {COLORS['surface_elevated']};
-        border: 1px solid {COLORS['border']};
-        border-left: 3px solid {COLORS['accent']};
+        background: {COLORS["surface_elevated"]};
+        border: 1px solid {COLORS["border"]};
+        border-left: 3px solid {COLORS["accent"]};
         border-radius: 10px;
         padding: 12px 14px;
         margin-bottom: 8px;
@@ -187,16 +181,16 @@ def citation_card(
     " onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform='translateX(0)'">
         <div style="
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 13px; font-weight: 600; color: {COLORS['text_primary']};
+            font-size: 13px; font-weight: 600; color: {COLORS["text_primary"]};
             margin-bottom: 6px;
         ">
             <span>📄 {filename}{page_label}</span>
             <span style="
-                font-size: 11px; color: {COLORS['text_secondary']};
+                font-size: 11px; color: {COLORS["text_secondary"]};
                 background: rgba(0,212,255,0.1); padding: 2px 8px; border-radius: 999px;
             ">{score:.0%} match</span>
         </div>
-        <div style="font-size: 13px; color: {COLORS['text_secondary']}; line-height: 1.5;">
+        <div style="font-size: 13px; color: {COLORS["text_secondary"]}; line-height: 1.5;">
             {snippet_trimmed}
         </div>
     </div>
@@ -215,12 +209,12 @@ def hero_banner(
     items_html = "".join(
         f"""<div style="
             display:flex; align-items:center; gap:6px;
-            background: {COLORS['surface_elevated']};
-            border: 1px solid {COLORS['border']};
+            background: {COLORS["surface_elevated"]};
+            border: 1px solid {COLORS["border"]};
             border-radius: 999px; padding: 6px 14px; font-size: 12px;
-            color: {COLORS['text_secondary']};
+            color: {COLORS["text_secondary"]};
             transition: border-color 0.2s ease;
-        ">{icon} {label} <b style="color:{COLORS['text_primary']};">{value}</b></div>"""
+        ">{icon} {label} <b style="color:{COLORS["text_primary"]};">{value}</b></div>"""
         for icon, label, value in status_items
     )
 
@@ -228,8 +222,8 @@ def hero_banner(
     <div style="
         background: radial-gradient(circle at 20% 20%, rgba(124,58,237,0.18), transparent 55%),
                     radial-gradient(circle at 80% 30%, rgba(0,212,255,0.14), transparent 50%),
-                    {COLORS['surface']};
-        border: 1px solid {COLORS['border']};
+                    {COLORS["surface"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 20px;
         padding: 28px 32px;
         margin-bottom: 20px;
@@ -242,7 +236,7 @@ def hero_banner(
             background-size: 200% auto;
             animation: shimmer 6s linear infinite;
         ">{title}</div>
-        <div style="color: {COLORS['text_secondary']}; margin-top: 4px; font-size: 14px;">
+        <div style="color: {COLORS["text_secondary"]}; margin-top: 4px; font-size: 14px;">
             {subtitle}
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;">
@@ -268,11 +262,7 @@ def loading_pipeline(stages: list[str], current_index: int) -> str:
         else:
             icon, color, weight = "○", COLORS["text_muted"], "400"
 
-        pulse = (
-            "animation: pulse 1.2s ease-in-out infinite;"
-            if idx == current_index
-            else ""
-        )
+        pulse = "animation: pulse 1.2s ease-in-out infinite;" if idx == current_index else ""
 
         items.append(
             f"""<div style="display:flex; align-items:center; gap:8px;">"""
@@ -283,14 +273,14 @@ def loading_pipeline(stages: list[str], current_index: int) -> str:
 
     return _flatten(f"""
     <div style="
-        background: {COLORS['surface_elevated']};
-        border: 1px solid {COLORS['border']};
+        background: {COLORS["surface_elevated"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 12px;
         padding: 14px 18px;
         display: flex; flex-direction: column; gap: 10px;
         margin-bottom: 8px;
     ">
-        {''.join(items)}
+        {"".join(items)}
     </div>
     """)
 
@@ -304,8 +294,8 @@ def upload_card(
     return _flatten(f"""
     <div style="
         display:flex; align-items:center; justify-content:space-between;
-        background: {COLORS['surface_elevated']};
-        border: 1px solid {COLORS['border']};
+        background: {COLORS["surface_elevated"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 10px;
         padding: 10px 14px;
         margin-bottom: 6px;
@@ -314,11 +304,11 @@ def upload_card(
         <div style="display:flex; align-items:center; gap:10px;">
             <span style="font-size:18px;">{icon}</span>
             <div>
-                <div style="font-size:13px; color:{COLORS['text_primary']}; font-weight:500;">{filename}</div>
-                <div style="font-size:11px; color:{COLORS['text_muted']};">{size_label}</div>
+                <div style="font-size:13px; color:{COLORS["text_primary"]}; font-weight:500;">{filename}</div>
+                <div style="font-size:11px; color:{COLORS["text_muted"]};">{size_label}</div>
             </div>
         </div>
-        <span style="font-size:11px; color:{COLORS['success']};">{status_label}</span>
+        <span style="font-size:11px; color:{COLORS["success"]};">{status_label}</span>
     </div>
     """)
 
@@ -338,21 +328,17 @@ def status_bar_html(
         route_html = f"<span>{icon} {label}</span>"
 
     latency_html = f"<span>⚡ {latency_ms:.0f}ms</span>" if latency_ms else ""
-    confidence_html = (
-        f"<span>🎯 {confidence:.0%} confidence</span>"
-        if confidence is not None
-        else ""
-    )
+    confidence_html = f"<span>🎯 {confidence:.0%} confidence</span>" if confidence is not None else ""
 
     return _flatten(f"""
     <div style="
         position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
-        background: {COLORS['glass']};
+        background: {COLORS["glass"]};
         backdrop-filter: blur(16px);
-        border-top: 1px solid {COLORS['border']};
+        border-top: 1px solid {COLORS["border"]};
         padding: 8px 24px;
         display: flex; gap: 20px; align-items: center;
-        font-size: 12px; color: {COLORS['text_secondary']};
+        font-size: 12px; color: {COLORS["text_secondary"]};
     ">
         <span style="display:flex; align-items:center; gap:6px;">
             <span style="width:7px; height:7px; border-radius:999px; background:{gemini_dot};"></span>
@@ -404,22 +390,21 @@ def router_timeline_card(
         nodes.append(
             (
                 "Retrieval",
-                f"{retrieved_documents} chunk(s) retrieved &middot; "
-                f"reranked: {'yes' if reranked else 'no'}",
+                (
+                    f"{retrieved_documents} chunk(s) retrieved &middot; "
+                    f"reranked: {'yes' if reranked else 'no'}"
+                ),
             )
         )
 
     if route in ("web_search", "hybrid") or corrective_fallback:
-        nodes.append(
-            ("Web Search", f"{web_results_used} result(s) retrieved")
-        )
+        nodes.append(("Web Search", f"{web_results_used} result(s) retrieved"))
 
     if corrective_fallback:
         nodes.append(
             (
                 "Corrective Fallback",
-                "Retrieval confidence was low -- web search was "
-                "automatically added.",
+                ("Retrieval confidence was low -- web search was automatically added."),
             )
         )
 
@@ -429,8 +414,7 @@ def router_timeline_card(
     nodes.append(
         (
             "Generation",
-            f"Final answer generated in "
-            f"{latency_ms.get('Generation', 0):.0f}ms",
+            (f"Final answer generated in {latency_ms.get('Generation', 0):.0f}ms"),
         )
     )
 
@@ -442,9 +426,9 @@ def router_timeline_card(
 
         node_blocks.append(
             f"""<div class="timeline-node" style="animation-delay:{delay}s;">"""
-            f"""<div style="font-size:12px; font-weight:700; color:{COLORS['text_primary']};">"""
+            f"""<div style="font-size:12px; font-weight:700; color:{COLORS["text_primary"]};">"""
             f"""{node_icon} {title}</div>"""
-            f"""<div style="font-size:12px; color:{COLORS['text_secondary']}; margin-top:2px;">{detail}</div>"""
+            f"""<div style="font-size:12px; color:{COLORS["text_secondary"]}; margin-top:2px;">{detail}</div>"""
             f"""</div>"""
         )
 
@@ -452,9 +436,9 @@ def router_timeline_card(
 
     latency_chips = "".join(
         f"""<span style="
-            background:{COLORS['surface_elevated']}; border-radius:999px;
-            padding:3px 10px; font-size:11px; color:{COLORS['text_secondary']}; margin-right:6px;
-        ">{name}: <b style="color:{COLORS['text_primary']}">{value:.0f}ms</b></span>"""
+            background:{COLORS["surface_elevated"]}; border-radius:999px;
+            padding:3px 10px; font-size:11px; color:{COLORS["text_secondary"]}; margin-right:6px;
+        ">{name}: <b style="color:{COLORS["text_primary"]}">{value:.0f}ms</b></span>"""
         for name, value in latency_ms.items()
     )
 
@@ -487,9 +471,9 @@ def diagnostics_dashboard(
     """
 
     sources = sources or []
-    source_names = ", ".join(
-        dict.fromkeys(s.get("filename", "") for s in sources if s.get("filename"))
-    ) or "--"
+    source_names = (
+        ", ".join(dict.fromkeys(s.get("filename", "") for s in sources if s.get("filename"))) or "--"
+    )
     route_label = ROUTE_LABELS.get(route, route.replace("_", " ").title() if route else "--")
 
     cells = [
@@ -505,23 +489,23 @@ def diagnostics_dashboard(
 
     cells_html = "".join(
         f"""<div style="
-            background:{COLORS['surface_elevated']}; border:1px solid {COLORS['border']};
+            background:{COLORS["surface_elevated"]}; border:1px solid {COLORS["border"]};
             border-radius:10px; padding:10px; text-align:center;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
         " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">"""
         f"""<div style="font-size:16px;">{icon}</div>"""
-        f"""<div style="font-size:13px; font-weight:700; color:{COLORS['text_primary']}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{value}</div>"""
-        f"""<div style="font-size:10px; color:{COLORS['text_secondary']};">{label}</div>"""
+        f"""<div style="font-size:13px; font-weight:700; color:{COLORS["text_primary"]}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{value}</div>"""
+        f"""<div style="font-size:10px; color:{COLORS["text_secondary"]};">{label}</div>"""
         f"""</div>"""
         for icon, value, label in cells
     )
 
     return _flatten(f"""
     <div style="
-        background:{COLORS['glass']}; backdrop-filter: blur(12px);
-        border:1px solid {COLORS['border']}; border-radius:16px; padding:16px; margin-top:10px;
+        background:{COLORS["glass"]}; backdrop-filter: blur(12px);
+        border:1px solid {COLORS["border"]}; border-radius:16px; padding:16px; margin-top:10px;
     ">
-        <div style="font-size:12px; font-weight:700; color:{COLORS['text_secondary']}; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
+        <div style="font-size:12px; font-weight:700; color:{COLORS["text_secondary"]}; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
             🛠️ Developer Diagnostics &middot; {model}
         </div>
         <div class="diag-grid">{cells_html}</div>

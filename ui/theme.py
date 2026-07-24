@@ -10,10 +10,10 @@ import streamlit as st
 # hardcoding values, so the whole app stays visually consistent.
 
 COLORS = {
-    "primary": "#7C3AED",       # purple accent
+    "primary": "#7C3AED",  # purple accent
     "primary_hover": "#8B5CF6",
-    "accent": "#00D4FF",        # blue accent
-    "emerald": "#10B981",       # emerald accent
+    "accent": "#00D4FF",  # blue accent
+    "emerald": "#10B981",  # emerald accent
     "background": "#0B1020",
     "surface": "#161B2E",
     "surface_elevated": "#1E2438",
@@ -28,14 +28,10 @@ COLORS = {
     "glass": "rgba(22, 27, 46, 0.65)",
 }
 
-GRADIENT_PRIMARY = (
-    f"linear-gradient(135deg, {COLORS['primary']} 0%, "
-    f"{COLORS['accent']} 100%)"
-)
+GRADIENT_PRIMARY = f"linear-gradient(135deg, {COLORS['primary']} 0%, {COLORS['accent']} 100%)"
 
 GRADIENT_AURORA = (
-    f"linear-gradient(135deg, {COLORS['primary']} 0%, "
-    f"{COLORS['accent']} 50%, {COLORS['emerald']} 100%)"
+    f"linear-gradient(135deg, {COLORS['primary']} 0%, {COLORS['accent']} 50%, {COLORS['emerald']} 100%)"
 )
 
 SPACING = {
@@ -59,7 +55,7 @@ SHADOWS = {
     "sm": "0 2px 8px rgba(0, 0, 0, 0.24)",
     "md": "0 8px 24px rgba(0, 0, 0, 0.32)",
     "lg": "0 16px 48px rgba(0, 0, 0, 0.4)",
-    "glow": f"0 0 24px rgba(124, 58, 237, 0.35)",
+    "glow": "0 0 24px rgba(124, 58, 237, 0.35)",
 }
 
 ROUTE_ICONS = {
@@ -118,39 +114,39 @@ def inject_theme() -> None:
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {{
-    --color-primary: {COLORS['primary']};
-    --color-primary-hover: {COLORS['primary_hover']};
-    --color-accent: {COLORS['accent']};
-    --color-background: {COLORS['background']};
-    --color-surface: {COLORS['surface']};
-    --color-surface-elevated: {COLORS['surface_elevated']};
-    --color-border: {COLORS['border']};
-    --color-border-strong: {COLORS['border_strong']};
-    --color-text-primary: {COLORS['text_primary']};
-    --color-text-secondary: {COLORS['text_secondary']};
-    --color-text-muted: {COLORS['text_muted']};
-    --color-success: {COLORS['success']};
-    --color-warning: {COLORS['warning']};
-    --color-error: {COLORS['error']};
-    --color-glass: {COLORS['glass']};
-    --color-emerald: {COLORS['emerald']};
+    --color-primary: {COLORS["primary"]};
+    --color-primary-hover: {COLORS["primary_hover"]};
+    --color-accent: {COLORS["accent"]};
+    --color-background: {COLORS["background"]};
+    --color-surface: {COLORS["surface"]};
+    --color-surface-elevated: {COLORS["surface_elevated"]};
+    --color-border: {COLORS["border"]};
+    --color-border-strong: {COLORS["border_strong"]};
+    --color-text-primary: {COLORS["text_primary"]};
+    --color-text-secondary: {COLORS["text_secondary"]};
+    --color-text-muted: {COLORS["text_muted"]};
+    --color-success: {COLORS["success"]};
+    --color-warning: {COLORS["warning"]};
+    --color-error: {COLORS["error"]};
+    --color-glass: {COLORS["glass"]};
+    --color-emerald: {COLORS["emerald"]};
     --gradient-primary: {GRADIENT_PRIMARY};
     --gradient-aurora: {GRADIENT_AURORA};
-    --radius-sm: {RADIUS['sm']};
-    --radius-md: {RADIUS['md']};
-    --radius-lg: {RADIUS['lg']};
-    --radius-xl: {RADIUS['xl']};
-    --radius-full: {RADIUS['full']};
-    --shadow-sm: {SHADOWS['sm']};
-    --shadow-md: {SHADOWS['md']};
-    --shadow-lg: {SHADOWS['lg']};
-    --shadow-glow: {SHADOWS['glow']};
-    --space-xs: {SPACING['xs']};
-    --space-sm: {SPACING['sm']};
-    --space-md: {SPACING['md']};
-    --space-lg: {SPACING['lg']};
-    --space-xl: {SPACING['xl']};
-    --space-2xl: {SPACING['2xl']};
+    --radius-sm: {RADIUS["sm"]};
+    --radius-md: {RADIUS["md"]};
+    --radius-lg: {RADIUS["lg"]};
+    --radius-xl: {RADIUS["xl"]};
+    --radius-full: {RADIUS["full"]};
+    --shadow-sm: {SHADOWS["sm"]};
+    --shadow-md: {SHADOWS["md"]};
+    --shadow-lg: {SHADOWS["lg"]};
+    --shadow-glow: {SHADOWS["glow"]};
+    --space-xs: {SPACING["xs"]};
+    --space-sm: {SPACING["sm"]};
+    --space-md: {SPACING["md"]};
+    --space-lg: {SPACING["lg"]};
+    --space-xl: {SPACING["xl"]};
+    --space-2xl: {SPACING["2xl"]};
 }}
 
 /* ---------- Global ---------- */

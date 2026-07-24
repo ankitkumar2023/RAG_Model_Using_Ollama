@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -7,8 +8,39 @@ from typing import Literal
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _load_streamlit_secrets_into_env() -> None:
+    """
+    Bridge Streamlit Community Cloud's secrets manager into the process
+    environment, so `Settings` (which reads from the environment / a
+    local `.env` file) works unchanged in both places.
+
+    On Cloud, secrets come from the app's Secrets dashboard via
+    `st.secrets` -- there's no committed `.env` (it's gitignored) and
+    the filesystem starts fresh on every deploy. Locally, `st.secrets`
+    simply has nothing configured and this is a no-op, so `.env`
+    continues to be the source of truth for local development.
+    """
+
+    try:
+        import streamlit as st
+
+        secrets = dict(st.secrets)
+    except Exception:
+        # No secrets.toml, not running under Streamlit, or no secrets
+        # configured -- fall through to .env / real env vars.
+        return
+
+    for key, value in secrets.items():
+        env_key = key.upper()
+
+        if env_key not in os.environ:
+            os.environ[env_key] = str(value)
+
+
+_load_streamlit_secrets_into_env()
 
 
 class Settings(BaseSettings):
@@ -28,9 +60,7 @@ class Settings(BaseSettings):
     # =====================================================
 
     app_name: str = Field(default="RAPID_PROTOTYPING")
-    app_env: Literal["development", "staging", "production"] = Field(
-        default="development"
-    )
+    app_env: Literal["development", "staging", "production"] = Field(default="development")
 
     debug: bool = Field(default=True)
     log_level: str = Field(default="INFO")
@@ -159,9 +189,7 @@ class Settings(BaseSettings):
     # =====================================================
 
     max_upload_size_mb: int = Field(default=25)
-    allowed_upload_extensions: tuple[str, ...] = Field(
-        default=(".pdf", ".docx", ".txt", ".md")
-    )
+    allowed_upload_extensions: tuple[str, ...] = Field(default=(".pdf", ".docx", ".txt", ".md"))
     rate_limit_requests: int = Field(default=20)
     rate_limit_window_seconds: int = Field(default=60)
 

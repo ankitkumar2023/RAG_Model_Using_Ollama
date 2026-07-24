@@ -34,9 +34,7 @@ def screen_prompt(text: str) -> GuardResult:
     two-layer app-side + provider-side approach.
     """
 
-    matched = [
-        pattern.pattern for pattern in _INJECTION_PATTERNS if pattern.search(text)
-    ]
+    matched = [pattern.pattern for pattern in _INJECTION_PATTERNS if pattern.search(text)]
 
     if matched:
         logger.warning("Prompt guard matched patterns: %s", matched)

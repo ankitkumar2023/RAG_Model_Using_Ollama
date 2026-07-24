@@ -26,8 +26,7 @@ def validate_upload(filename: str, file_bytes: bytes) -> ValidationResult:
         return ValidationResult(
             is_valid=False,
             reason=(
-                f"'{suffix}' is not an allowed file type "
-                f"({', '.join(settings.allowed_upload_extensions)})."
+                f"'{suffix}' is not an allowed file type ({', '.join(settings.allowed_upload_extensions)})."
             ),
         )
 
@@ -39,10 +38,7 @@ def validate_upload(filename: str, file_bytes: bytes) -> ValidationResult:
     if size_mb > settings.max_upload_size_mb:
         return ValidationResult(
             is_valid=False,
-            reason=(
-                f"File is {size_mb:.1f}MB, exceeds the "
-                f"{settings.max_upload_size_mb}MB limit."
-            ),
+            reason=(f"File is {size_mb:.1f}MB, exceeds the {settings.max_upload_size_mb}MB limit."),
         )
 
     return ValidationResult(is_valid=True)
